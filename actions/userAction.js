@@ -1,4 +1,9 @@
-"use server"
+"use server";
+
+import UserSchema from "@/lib/models/UserSchema";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 const { default: dbConn } = require("@/lib/db/dbConn");
 
 let conn = false;
@@ -15,6 +20,80 @@ async function connect() {
 export async function userSignup(formData) {
   try {
     if (!conn) await connect();
-    console.log(formData);
-  } catch (error) {}
+    const hashPass = bcrypt.hashSync(formData.get("password"), 12);
+    const newUser = await UserSchema.create({
+      name: formData.get("name"),
+      role: formData.get("role"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      password: hashPass,
+    });
+    return {
+      status: 200,
+      message: "User signup Successfully",
+    };
+  } catch (error) {
+    return {
+      status: 400,
+      message: "Something went wrong!",
+    };
+  }
+}
+
+export async function userLogin(fromData) {
+  try {
+    if (!conn) await connect();
+    const email = fromData.get("email");
+    const password = fromData.get("password");
+    const role = fromData.get("role");
+    const exitingUser = await UserSchema.findOne({ email, role });
+    if (!exitingUser) {
+      return {
+        status: 404,
+        message: "User not found!",
+      };
+    }
+    const isMatch = await bcrypt.compare(password, exitingUser.password);
+    if (!isMatch) {
+      return {
+        status: 401,
+        message: "Password not match!",
+      };
+    }
+    if (!exitingUser.approved) {
+      return {
+        status: 400,
+        message: "Your account is not approved!",
+      };
+    }
+    const token = jwt.sign(
+      {
+        id: exitingUser._id,
+        name: exitingUser.name,
+        email: exitingUser.email,
+        role: exitingUser.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+    cookies().set({
+      name: "user_auth",
+      value: token,
+      httpOnly: true,
+      path: "/",
+      secure: true,
+    });
+    return {
+      status: 200,
+      message: "User login Successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Something went wrong!",
+    };
+  }
 }

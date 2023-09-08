@@ -1,13 +1,7 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import Link from "next/link";
+import { useRef } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -16,26 +10,46 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { userSignup } from "@/actions/userAction";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { userLogin } from "@/actions/userAction";
 import { useToast } from "@/components/ui/use-toast";
-import { useRef } from "react";
-const SignupForm = () => {
-  const { toast } = useToast();
+const LoginForm = () => {
   const formRef = useRef();
-  const clientActionSignup = async (formData) => {
-    const name = formData.get("name");
-    const role = formData.get("role");
+  const { toast } = useToast();
+
+  const handleUserLogin = async (formData) => {
     const email = formData.get("email");
-    const phone = formData.get("phone");
     const password = formData.get("password");
-    if (name.length > 2 && role && email.includes("@") && phone && password) {
-      const { status } = await userSignup(formData);
+    const role = formData.get("role");
+    if (role && email.includes("@") && password) {
+      const { status, token } = await userLogin(formData);
+      console.log(status);
+      if (status == 400) {
+        toast({
+          variant: "destructive",
+          title: "Your profile is currently in the queue for approval!",
+        });
+      }
+      if (status == 401 || status == 404) {
+        toast({
+          variant: "destructive",
+          title: "Invalid Credentials!",
+        });
+      }
       if (status == 200) {
+        console.log(token);
         toast({
           className: "bg-black text-white",
           title: "Success",
-          description: "Your signup request has been submitted for approval.",
+          description: "Your login request has been submitted for approval.",
         });
         formRef.current.reset();
       }
@@ -46,26 +60,18 @@ const SignupForm = () => {
       });
     }
   };
+  
   return (
     <Card>
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl text-center">Welcome!</CardTitle>
+        <CardTitle className="text-2xl text-center">Welcome Back!</CardTitle>
         <CardDescription className="text-center">
-          BCIIT Leave Management App
+          Enter your email and password to login
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} action={clientActionSignup}>
+        <form ref={formRef} action={handleUserLogin}>
           <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                name="name"
-                type="name"
-                placeholder="Enter Full Name"
-              />
-            </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -85,21 +91,17 @@ const SignupForm = () => {
               />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="phone"
-                placeholder="Enter Your Phone No."
-              />
-            </div>
-            <div className="flex flex-col space-y-1.5">
               <Label htmlFor="role">Role</Label>
               <Select name="role">
                 <SelectTrigger id="role">
-                  <SelectValue placeholder="Select" />
+                  <SelectValue
+                    defaultValue=""
+                    defaultChecked
+                    placeholder="Select"
+                  />
                 </SelectTrigger>
                 <SelectContent position="role">
+                  <SelectItem value="">Select</SelectItem>
                   <SelectItem value="staff">Staff</SelectItem>
                   <SelectItem value="faculty">Faculty</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
@@ -107,13 +109,21 @@ const SignupForm = () => {
               </Select>
             </div>
             <Button className="w-full" type="submit">
-              Signup
+              Login
             </Button>
           </div>
         </form>
       </CardContent>
+      <CardFooter className="flex flex-col">
+        <p className="mt-2 text-xs text-center text-gray-700">
+          Dont have an account?
+          <Link href="/signup">
+            <span className="text-blue-600"> Sign up</span>
+          </Link>
+        </p>
+      </CardFooter>
     </Card>
   );
 };
 
-export default SignupForm;
+export default LoginForm;

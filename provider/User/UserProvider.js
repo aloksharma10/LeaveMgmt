@@ -1,15 +1,13 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import UserContext from "./UserContext";
 function UserProvider({ children }) {
-  function userSignup() {
-    
+  const [user, setUser] = useState([]);
 
-  }
-
-  const alok = "haaji";
   return (
-    <UserContext.Provider value={{ alok }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
   );
 }
 
