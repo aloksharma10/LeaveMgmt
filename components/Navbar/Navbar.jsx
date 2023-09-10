@@ -73,7 +73,7 @@ function Navbar() {
               <Link href="/">Home</Link>
             </li>
             <li className="text-md mx-2 my-2 font-semibold hover:text-black transition hover:scale-105 duration-150 ease-out hover:ease-in">
-              <Link href="/gadgets">Gadgets</Link>
+              <Link href="/admin">Admin</Link>
             </li>
           </ul>
           <div className="text-center my-2 pr-4 pl-2">

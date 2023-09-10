@@ -17,35 +17,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { userSignup } from "@/actions/userAction";
-import { useToast } from "@/components/ui/use-toast";
 import { useRef } from "react";
+import { useUserProvider } from "@/provider/User/UserProvider";
 const SignupForm = () => {
-  const { toast } = useToast();
   const formRef = useRef();
-  const clientActionSignup = async (formData) => {
-    const name = formData.get("name");
-    const role = formData.get("role");
-    const email = formData.get("email");
-    const phone = formData.get("phone");
-    const password = formData.get("password");
-    if (name.length > 2 && role && email.includes("@") && phone && password) {
-      const { status } = await userSignup(formData);
-      if (status == 200) {
-        toast({
-          className: "bg-black text-white",
-          title: "Success",
-          description: "Your signup request has been submitted for approval.",
-        });
-        formRef.current.reset();
-      }
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Please enter the valid details!",
-      });
-    }
-  };
+  const { handleUserSignup, status } = useUserProvider();
+  if (status === true) {
+    formRef?.current?.reset();
+  }
   return (
     <Card>
       <CardHeader className="space-y-1">
@@ -55,7 +34,7 @@ const SignupForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} action={clientActionSignup}>
+        <form ref={formRef} action={handleUserSignup}>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Name</Label>

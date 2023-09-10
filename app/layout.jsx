@@ -1,10 +1,10 @@
-import UserProvider from "@/provider/User/UserProvider";
 import "./globals.css";
+import UserProvider from "@/provider/User/UserProvider";
 import { Inter } from "next/font/google";
 import Navbar from "@/components/Navbar/Navbar";
 import CustomeLayout from "./CustomeLayout";
 import { Toaster } from "@/components/ui/toaster";
-
+import { SessionProvider } from "next-auth/react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -16,12 +16,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <UserProvider>
-          <CustomeLayout />
-          <Navbar />
-          {children}
-          <Toaster />
-        </UserProvider>
+        <CustomeLayout>
+          <UserProvider>
+            <Navbar />
+            {children}
+            <Toaster />
+          </UserProvider>
+        </CustomeLayout>
       </body>
     </html>
   );

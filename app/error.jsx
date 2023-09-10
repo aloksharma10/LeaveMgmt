@@ -9,7 +9,7 @@ export default function Error({ error, reset }) {
         <h2 className="font-semibold text-md">Something went wrong!</h2>
         <p className="text-sm text-muted-foreground">
           We&lsquo;re regret to provide you a seamless performance, please try
-          again!
+          again! Error: {error.message}
         </p>
 
         <div className="mt-3 flex justify-end">

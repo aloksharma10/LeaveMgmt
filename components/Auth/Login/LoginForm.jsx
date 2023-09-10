@@ -1,6 +1,4 @@
-"use client";
 import Link from "next/link";
-import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,48 +17,9 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { userLogin } from "@/actions/userAction";
-import { useToast } from "@/components/ui/use-toast";
+import { useUserProvider } from "@/provider/User/UserProvider";
 const LoginForm = () => {
-  const formRef = useRef();
-  const { toast } = useToast();
-
-  const handleUserLogin = async (formData) => {
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const role = formData.get("role");
-    if (role && email.includes("@") && password) {
-      const { status, token } = await userLogin(formData);
-      console.log(status);
-      if (status == 400) {
-        toast({
-          variant: "destructive",
-          title: "Your profile is currently in the queue for approval!",
-        });
-      }
-      if (status == 401 || status == 404) {
-        toast({
-          variant: "destructive",
-          title: "Invalid Credentials!",
-        });
-      }
-      if (status == 200) {
-        console.log(token);
-        toast({
-          className: "bg-black text-white",
-          title: "Success",
-          description: "Your login request has been submitted for approval.",
-        });
-        formRef.current.reset();
-      }
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Please enter the valid details!",
-      });
-    }
-  };
-  
+  const { handleUserLogin } = useUserProvider();
   return (
     <Card>
       <CardHeader className="space-y-1">
@@ -70,7 +29,7 @@ const LoginForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} action={handleUserLogin}>
+        <form action={handleUserLogin}>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
