@@ -7,12 +7,14 @@ import React, {
 import UserContext from "./UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import { userSignup } from "@/actions/userAction";
-import { redirect } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function UserProvider({ children }) {
-  const [user, setUser] = useState([]);
+  const router = useRouter()
   const { toast } = useToast();
+
+  const [user, setUser] = useState([]);
 
   const session = useSession();
   console.log(session);
@@ -58,6 +60,7 @@ function UserProvider({ children }) {
       if (role && email.includes("@") && password) {
         const { error } = await signIn("credentials", {
           ...userData,
+
           redirect: false,
         });
 
@@ -87,7 +90,7 @@ function UserProvider({ children }) {
               description:
                 "Your login request has been submitted for approval.",
             });
-            redirect(role.toLowerCase() == "admin" ? "/admin" : "/");
+            router.push(role.toLowerCase() == "admin" ? "/admin" : "/dashboard");
             break;
         }
       } else {
@@ -97,7 +100,7 @@ function UserProvider({ children }) {
         });
       }
     },
-    [toast]
+    [router, toast]
   );
 
   return (

@@ -5,6 +5,7 @@ export default function Home() {
     loading: () => <div>Loading...</div>,
   });
   return (
-   <Dashboard/>
+  //  <Dashboard/>
+  <>admin</>
   )
 }

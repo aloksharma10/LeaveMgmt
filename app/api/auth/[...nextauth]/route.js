@@ -51,32 +51,30 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({token, user, account, profile, isNewUser}) {
+    async jwt({ token, user, account, profile, isNewUser }) {
       if (user) {
         token.id = user._id.toString();
         token.role = user.role;
       }
       return token;
     },
-    async session({session, token}) {
+    async session({ session, token }) {
       session.user.id = token.id;
       session.user.role = token.role;
-      console.log("session", session) 
       return session;
     },
   },
-  pages:{
-    signIn: "/login",
+  pages: {
+    signIn: "/",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  // secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
-    jwt: true,
     maxAge: 24 * 60 * 60, // 24 hours
   },
-  jwt: {
-    secret: process.env.NEXTAUTH_SECRET,
-  },
+  // jwt: {
+  //   secret: process.env.NEXTAUTH_SECRET,
+  // },
 });
 
 export { handler as GET, handler as POST };

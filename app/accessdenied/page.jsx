@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 
-const page = ({ searchParams, status }) => {
+const page = ({ searchParams }) => {
   const { unauthorized } = searchParams;
-  console.log("searchParams", searchParams, status);
   if (!unauthorized) {
     return redirect("/not-found");
   }

@@ -12,7 +12,7 @@ export default function Login() {
       />
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 lg:max-w-lg">
-         <LoginForm/>
+          <LoginForm />
         </div>
       </div>
     </div>

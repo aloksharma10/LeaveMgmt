@@ -70,7 +70,7 @@ function Navbar() {
         <div className="w-full flex-grow-5 lg:flex lg:flex-1 lg:content-center lg:justify-end lg:w-auto h-0 lg:h-auto mt-2 lg:mt-0 z-20 overflow-hidden lg:overflow-visible ">
           <ul className="flex items-center lg:flex-row ">
             <li className="text-md mx-2 my-2 font-semibold hover:text-black transition hover:scale-105 duration-150 ease-out hover:ease-in">
-              <Link href="/">Home</Link>
+              <Link href="/dashboard">Home</Link>
             </li>
             <li className="text-md mx-2 my-2 font-semibold hover:text-black transition hover:scale-105 duration-150 ease-out hover:ease-in">
               <Link href="/admin">Admin</Link>

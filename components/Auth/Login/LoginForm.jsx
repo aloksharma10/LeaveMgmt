@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUserProvider } from "@/provider/User/UserProvider";
+import SubmitButton from "../SubmitButton";
 const LoginForm = () => {
   const { handleUserLogin } = useUserProvider();
   return (
@@ -67,9 +69,7 @@ const LoginForm = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button className="w-full" type="submit">
-              Login
-            </Button>
+            <SubmitButton title={"Login"}/>
           </div>
         </form>
       </CardContent>

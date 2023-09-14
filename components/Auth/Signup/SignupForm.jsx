@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import { useUserProvider } from "@/provider/User/UserProvider";
+import SubmitButton from "../SubmitButton";
 const SignupForm = () => {
   const formRef = useRef();
   const { handleUserSignup, status } = useUserProvider();
@@ -85,9 +86,7 @@ const SignupForm = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button className="w-full" type="submit">
-              Signup
-            </Button>
+            <SubmitButton title={"Signup"}/>
           </div>
         </form>
       </CardContent>

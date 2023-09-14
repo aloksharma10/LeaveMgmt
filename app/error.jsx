@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Error({ error, reset }) {
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center backdrop-blur-lg">
+    <div className="fixed top-0 w-full h-full flex justify-center items-center backdrop-blur-lg container">
       <div className="bg-black p-5 text-white rounded-md">
         <h2 className="font-semibold text-md">Something went wrong!</h2>
         <p className="text-sm text-muted-foreground">
