@@ -1,14 +1,10 @@
-import { getServerSession } from "next-auth";
+import Navbar from "@/components/Navbar/Navbar";
 
-export default async function AuthLayout({ children }) {
-  const session = await getServerSession();
-  if (session?.user) {
-    
-    console.log(session);
-  }
+export default function AuthLayout({ children }) {
   return (
-    <div className="container py-5">
-      {children}
-    </div>
+    <>
+      <Navbar />
+      <div className="container py-5">{children}</div>
+    </>
   );
 }

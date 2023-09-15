@@ -1,11 +1,9 @@
 import "./globals.css";
-import UserProvider from "@/provider/User/UserProvider";
-import { Inter } from "next/font/google";
-import Navbar from "@/components/Navbar/Navbar";
-import CustomeLayout from "./CustomeLayout";
-import { Toaster } from "@/components/ui/toaster";
-import { SessionProvider } from "next-auth/react";
 const inter = Inter({ subsets: ["latin"] });
+import { Inter } from "next/font/google";
+import { Toaster } from "@/components/ui/toaster";
+import UserProvider from "@/provider/User/UserProvider";
+import CustomeLayout from "./CustomeLayout";
 
 export const metadata = {
   title: "Create Next App",
@@ -18,7 +16,6 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <CustomeLayout>
           <UserProvider>
-            <Navbar />
             {children}
             <Toaster />
           </UserProvider>

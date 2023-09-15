@@ -1,12 +1,12 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Sidebar from "./Sidebar";
+import Navbar from "../Navbar/Navbar";
 
 export default function Dashboard() {
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="container mx-auto mt-12">
+    <div className="bg-emerald-800 w-full px-3 pt-3 col-span-9">
+      <Navbar />
+      <div className="container mx-auto mt-5 ">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

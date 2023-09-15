@@ -1,14 +1,14 @@
-"use client"
+"use client";
 import Link from "next/link";
 import { useState } from "react";
 
-const Sidebar = ({userSession}) => {
+const Sidebar = ({ userSession }) => {
   const [open, setOpen] = useState(false);
   return (
     <div
       className={` ${
-        open ? "w-40" : "w-60 "
-      } flex flex-col h-screen p-3 bg-black shadow duration-300`}
+        open ? "-translate-x-24 " : "translate-x-0"
+      } md:flex flex-col min-h-screen p-3 bg-black shadow duration-300`}
     >
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -170,7 +170,9 @@ const Sidebar = ({userSession}) => {
                     d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
                   />
                 </svg>
-                <span className="text-gray-100">{userSession?"Logout":"Login"}</span>
+                <span className="text-gray-100">
+                  {userSession ? "Logout" : "Login"}
+                </span>
               </Link>
             </li>
           </ul>

@@ -1,23 +1,23 @@
 "use client";
-import React, {
-  useCallback,
-  useContext,
-  useState,
-} from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import { userSignup } from "@/actions/userAction";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 function UserProvider({ children }) {
-  const router = useRouter()
+  const router = useRouter();
   const { toast } = useToast();
 
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState({});
 
-  const session = useSession();
-  console.log(session);
+  const { data: session } = useSession();
+  useEffect(() => {
+    if (session?.user) {
+      setUser(session.user);
+    }
+  }, [session]);
 
   const handleUserSignup = useCallback(
     async (formData) => {
@@ -29,7 +29,6 @@ function UserProvider({ children }) {
       if (name.length > 2 && role && email.includes("@") && phone && password) {
         const { status } = await userSignup(formData);
         if (status == 200) {
-          setStatus(true);
           toast({
             className: "bg-black text-white",
             title: "Success",
@@ -60,7 +59,6 @@ function UserProvider({ children }) {
       if (role && email.includes("@") && password) {
         const { error } = await signIn("credentials", {
           ...userData,
-
           redirect: false,
         });
 
@@ -90,7 +88,7 @@ function UserProvider({ children }) {
               description:
                 "Your login request has been submitted for approval.",
             });
-            router.push(role.toLowerCase() == "admin" ? "/admin" : "/dashboard");
+            return router.push(role.toLowerCase() == "admin" ? "/admin" : "/user");
             break;
         }
       } else {
@@ -103,12 +101,31 @@ function UserProvider({ children }) {
     [router, toast]
   );
 
+  const handleSignOut = useCallback(async () => {
+    try {
+      await signOut();
+      setUser({});
+      toast({
+        className: "bg-black text-white",
+        title: "Success",
+        description: "Logout successfully!",
+      });
+
+      return router.push("/");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!",
+      });
+    }
+  }, [router, toast]);
   return (
     <UserContext.Provider
       value={{
         user,
         handleUserSignup,
         handleUserLogin,
+        handleSignOut,
       }}
     >
       {children}

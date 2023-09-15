@@ -67,13 +67,18 @@ const handler = NextAuth({
   pages: {
     signIn: "/",
   },
-  // secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
     maxAge: 24 * 60 * 60, // 24 hours
   },
   // jwt: {
-  //   secret: process.env.NEXTAUTH_SECRET,
+  //   async encode({ secret, token }) {
+  //     return jwt.sign(token, secret);
+  //   },
+  //   async decode({ secret, token }) {
+  //     return jwt.verify(token, secret);
+  //   },
   // },
 });
 
