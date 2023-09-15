@@ -21,7 +21,7 @@ function Navbar() {
   }, [pathname]);
 
   return (
-    <nav className="w-full rounded-lg z-20 py-4 shadow-lg sticky top-0 backdrop-blur-md bg-white/40 ">
+    <nav className="w-full rounded-xl z-20 py-4 shadow-lg sticky top-0 backdrop-blur-md bg-white/40">
       <div className="flex items-center justify-between px-4 md:container">
         <div className="flex items-center cursor-pointer text-md font-bold">
           <Logo size={30} />
@@ -89,7 +89,10 @@ function Navbar() {
             </>
           ) : (
             <li className="bg-black/80 text-white p-1 px-2  rounded-md">
-              <Link href="/" className="flex items-center text-sm font-semibold hover:bg-black/30  rounded-md">
+              <Link
+                href="/"
+                className="flex items-center text-sm font-semibold hover:bg-black/30  rounded-md"
+              >
                 <span className="mx-1">Login</span>
                 <AiOutlineLogin size={25} />
               </Link>

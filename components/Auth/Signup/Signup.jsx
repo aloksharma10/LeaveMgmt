@@ -9,10 +9,10 @@ function Signup() {
   return (
     <div className="relative h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <Link
-        href="/login"
+        href="/"
         className={cn(
-          buttonVariants({ variant: "ghost" }),
-          "absolute right-4 top-4 md:right-8 md:top-8"
+          buttonVariants({ variant: "secondary" }),
+          "absolute right-4 top-4 md:right-8 md:top-8 bg-gray-100 rounded-md shadow-md hover:bg-gray-200"
         )}
       >
         Login
@@ -24,7 +24,7 @@ function Signup() {
           ever before."
       />
       <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 lg:max-w-lg">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 lg:max-w-lg shadow-xl rounded-md bg-white">
           <SignupForm />
         </div>
       </div>

@@ -4,10 +4,10 @@ import Navbar from "../Navbar/Navbar";
 
 export default function Dashboard() {
   return (
-    <div className="bg-emerald-800 w-full px-3 pt-3 col-span-9">
+    <div className="w-full min-h-screen px-3 lg:px-10 pt-3">
       <Navbar />
       <div className="container mx-auto mt-5 ">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
