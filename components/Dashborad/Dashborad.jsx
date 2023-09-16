@@ -1,12 +1,15 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "../Navbar/Navbar";
+import LeaveOverView from "./components/LeaveOverView";
+import CalendarComponent from "./components/CalendarComponent";
+import DataTable from "./components/DataTable";
 
 export default function Dashboard() {
   return (
-    <div className="w-full min-h-screen px-3 lg:px-10 pt-3">
+    <div className="w-full min-h-screen lg:px-10 pt-5 lg:pt-3">
       <Navbar />
-      <div className="container mx-auto mt-5 ">
+      <div className="container mx-auto mt-5 space-y-3 ">
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -108,6 +111,25 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="col-span-4">
+            <CardHeader>
+              <CardTitle>Overview</CardTitle>
+            </CardHeader>
+            <CardContent className="pl-2">
+              <LeaveOverView />
+            </CardContent>
+          </Card>
+          <Card className="col-span-3">
+            <CardHeader>
+              <CardTitle>Recent Sales</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DataTable />
+            </CardContent>
+          </Card>
+        </div>
+        <CalendarComponent />
       </div>
     </div>
   );
