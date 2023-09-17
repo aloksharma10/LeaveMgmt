@@ -88,7 +88,8 @@ function UserProvider({ children }) {
               description:
                 "Your login request has been submitted for approval.",
             });
-            return router.push(role.toLowerCase() == "admin" ? "/admin" : "/user");
+            router.push(role.toLowerCase() == "admin" ? "/admin" : "/user");
+            return;
             break;
         }
       } else {
@@ -111,7 +112,8 @@ function UserProvider({ children }) {
         description: "Logout successfully!",
       });
 
-      return router.push("/");
+      router.push("/");
+      return;
     } catch (error) {
       toast({
         variant: "destructive",

@@ -1,6 +1,7 @@
 "use server";
 // import { Workbook } from "exceljs";
 import puppeteer from "puppeteer";
+import { SMTPClient } from "emailjs";
 
 // export async function generateReportCSV() {
 //   try {
@@ -36,6 +37,8 @@ import puppeteer from "puppeteer";
 //   }
 // }
 
+const mail = "aloks.uber@gmail.com";
+const pwd = "zxccqaehbsbsunkf";
 export async function generateReportPDF() {
   try {
     const browser = await puppeteer.launch({
@@ -152,5 +155,30 @@ export async function generateReportPDF() {
     console.log("PDF Report generated successfully.");
   } catch (error) {
     console.error("Something went wrong:", error);
+  }
+}
+
+export async function sendMail() {
+  const client = new SMTPClient({
+    user: mail,
+    password: pwd,
+    host: "smtp.gmail.com",
+    ssl: true,
+  });
+
+  try {
+    const message = await client.sendAsync({
+      text: "i hope this works",
+      from: mail,
+      to: "aloks.uber@gmail.com, aloksharma10969@gmail.com",
+      subject: "testing emailjs",
+      attachment: [
+        { data: "i <i>hope</i> this works!", alternative: true },
+        { path: "Leave_reports/leave-report.pdf", type: "application/pdf", name: 'renamed.pdf' },
+      ],
+    });
+    console.log(message);
+  } catch (err) {
+    console.error(err);
   }
 }
