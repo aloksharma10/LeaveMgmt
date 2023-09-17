@@ -2,6 +2,8 @@
 // import { Workbook } from "exceljs";
 import puppeteer from "puppeteer";
 import { SMTPClient } from "emailjs";
+import { readFile } from 'fs/promises';
+import html from '@/components/'
 
 // export async function generateReportCSV() {
 //   try {
@@ -159,6 +161,9 @@ export async function generateReportPDF() {
 }
 
 export async function sendMail() {
+  // const email_template = "";
+  const email_template = await readFile('Leave_reports/templates/indiviusal.html', 'utf-8');
+
   const client = new SMTPClient({
     user: mail,
     password: pwd,
@@ -173,8 +178,12 @@ export async function sendMail() {
       to: "aloks.uber@gmail.com, aloksharma10969@gmail.com",
       subject: "testing emailjs",
       attachment: [
-        { data: "i <i>hope</i> this works!", alternative: true },
-        { path: "Leave_reports/leave-report.pdf", type: "application/pdf", name: 'renamed.pdf' },
+        { data: email_template, alternative: true },
+        {
+          path: "Leave_reports/leave-report.pdf",
+          type: "application/pdf",
+          name: "renamed.pdf",
+        },
       ],
     });
     console.log(message);
