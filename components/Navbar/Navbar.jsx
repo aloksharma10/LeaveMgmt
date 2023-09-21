@@ -8,16 +8,20 @@ import { UserNav } from "./UserNav";
 import { Notification } from "./Notification";
 import { useUserProvider } from "@/provider/User/UserProvider";
 import MobileSidebar from "../Dashborad/MobileSidebar";
+import { cn } from "@/lib/utils";
 
-function Navbar() {
+function Navbar({ navbg }) {
   const { user, handleSignOut } = useUserProvider();
 
   return (
-    <nav className="w-full rounded-xl z-20 py-4 shadow-lg sticky top-0 backdrop-blur-md bg-white/40">
-      
+    <nav
+      className={cn(
+        "w-full rounded-xl z-20 py-4 shadow-xl sticky top-0 backdrop-blur-md bg-white/40",
+        navbg && "bg-gray-200 mb-5 "
+      )}
+    >
       <div className="flex items-center justify-between px-4 md:container">
-      <MobileSidebar/>
-
+        <MobileSidebar />
         <div className="flex items-center cursor-pointer text-md font-bold md:pl-0 pl-10">
           <Logo size={30} />
           <span className="hidden md:block">Leave Management</span>

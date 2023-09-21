@@ -37,7 +37,7 @@ export default function Dashboard() {
     },
   ];
   return (
-    <div className="container mx-auto mt-5 space-y-3 ">
+    <div className="container mx-auto space-y-3 px-3">
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -150,7 +150,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             {/* <Suspense fallback={<Loading />}> */}
-              <DataTable invoices={invoices} />
+            <DataTable invoices={invoices} />
             {/* </Suspense> */}
           </CardContent>
         </Card>

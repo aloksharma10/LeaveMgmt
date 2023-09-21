@@ -4,6 +4,7 @@ import { useState } from "react";
 import { RiMenuUnfoldFill } from "react-icons/ri";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { BarChart3, GanttChartSquare, Home, MessageCircle, Settings } from "lucide-react";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -11,50 +12,55 @@ const Sidebar = () => {
   const admin = [
     {
       name: "Home",
-      icon: RiMenuUnfoldFill,
-      href: "/",
+      icon: Home,
+      href: "/admin",
     },
     {
-      name: "Mails",
-      icon: RiMenuUnfoldFill,
-      href: "/mails",
+      name: "User Leave Request",
+      icon: GanttChartSquare,
+      href: "/admin/leave-request",
     },
     {
-      name: "Products",
-      icon: RiMenuUnfoldFill,
-      href: "/products",
+      name: "Leave Report",
+      icon: BarChart3,
+      href: "/admin/reports",
     },
     {
       name: "Settings",
-      icon: RiMenuUnfoldFill,
-      href: "/settings",
+      icon: Settings,
+      href: "/admin/profile",
     },
   ];
 
   const user = [
     {
       name: "Home",
-      icon: RiMenuUnfoldFill,
-      href: "/",
+      icon: Home,
+      href: "/user",
     },
     {
-      name: "Mails",
-      icon: RiMenuUnfoldFill,
-      href: "/mails",
+      name: "Leave Request",
+      icon: MessageCircle,
+      href: "/leave-request",
     },
     {
-      name: "Products",
-      icon: RiMenuUnfoldFill,
-      href: "/products",
+      name: "Report",
+      icon: BarChart3,
+      href: "/reports",
     },
     {
       name: "Settings",
-      icon: RiMenuUnfoldFill,
-      href: "/settings",
+      icon: Settings,
+      href: "/profile",
     },
   ];
   const [open, setOpen] = useState(false);
   const routes = pathname.startsWith("/admin") ? admin : user;
+  const href = routes.find((route) => route.href)?.href;
+  const isActive =
+    (pathname === "/" && href === "/") ||
+    pathname === href ||
+    pathname?.startsWith(`${href}/`);
   return (
     <>
       <div
@@ -105,7 +111,6 @@ const Sidebar = () => {
                     )}
                   </li>
                 ))}
-              {/* </Suspense> */}
             </ul>
           </div>
         </div>
@@ -113,7 +118,7 @@ const Sidebar = () => {
       {open && (
         <div
           onClick={() => setOpen(false)}
-          className="fixed hidden lg:block lg:top-6 left-3 lg:left-14 z-30 bg-gray-100 p-2 rounded-md shadow cursor-pointer"
+          className="fixed hidden lg:block lg:top-8 left-3 lg:left-14 z-30 bg-gray-100 p-2 rounded-md shadow cursor-pointer"
         >
           <RiMenuUnfoldFill className="w-6 h-6 text-black" />
         </div>

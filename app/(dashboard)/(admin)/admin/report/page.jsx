@@ -1,8 +1,11 @@
-"use client"; 
-import { generateReportPDF, sendMail} from "@/actions/genrateReport";
+import UserTable from "@/components/Dashborad/components/UserTable";
 
 const page = async () => {
-  return <div onClick={async ()=> await sendMail()}>report</div>;
+  return (
+    <div className="container mx-auto px-4">
+      <UserTable />
+    </div>
+  );
 };
 
 export default page;

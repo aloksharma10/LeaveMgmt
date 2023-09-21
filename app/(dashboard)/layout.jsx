@@ -7,8 +7,8 @@ export default async function DashboardLayout({ children }) {
       <div className="hidden lg:block ">
         <Sidebar />
       </div>
-      <div className="w-full min-h-screen lg:px-10 pt-5 lg:pt-3">
-        <Navbar />
+      <div className="w-full min-h-screen lg:px-10 py-4 px-3 ">
+        <Navbar navbg={true} />
         {children}
       </div>
     </div>
