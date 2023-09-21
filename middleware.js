@@ -17,6 +17,7 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ req, token }) => {
+        console.log("cookes", req.cookies )
         console.log("token", token);
         if (!token) {
           return false;

@@ -15,8 +15,7 @@ async function connect() {
     throw new Error("MongoDB not connected", error);
   }
 }
-
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -29,24 +28,24 @@ const handler = NextAuth({
         if (!conn) {
           await connect();
         }
-        const userData = await UserSchema.findOne({
+        const user = await UserSchema.findOne({
           email: credentials.email,
           role: credentials.role,
         });
-        if (!userData) {
+        if (!user) {
           throw new Error("User not found!");
         }
-        if (userData.approved == false) {
+        if (user.approved == false) {
           throw new Error("waiting for approval!");
         }
         const isMatch = await bcrypt.compare(
           credentials.password,
-          userData.password
+          user.password
         );
         if (!isMatch) {
           throw new Error("Invalid Credentials!");
         }
-        return userData;
+        return user;
       },
     }),
   ],
@@ -72,6 +71,8 @@ const handler = NextAuth({
     strategy: "jwt",
     maxAge:  60 * 60, // 24 hours
   },
-});
+}
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
