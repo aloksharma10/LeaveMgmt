@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
+import bcrypt from "bcrypt";
+import CredentialsProvider from "next-auth/providers/credentials";
 import UserSchema from "@/lib/models/UserSchema";
 import dbConn from "@/lib/db/dbConn";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
 
 let conn = false;
 
@@ -70,16 +70,8 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge:  60 * 60, // 24 hours
   },
-  // jwt: {
-  //   async encode({ secret, token }) {
-  //     return jwt.sign(token, secret);
-  //   },
-  //   async decode({ secret, token }) {
-  //     return jwt.verify(token, secret);
-  //   },
-  // },
 });
 
 export { handler as GET, handler as POST };

@@ -1,71 +1,59 @@
 "use client";
-import { Suspense, useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 import { RiMenuUnfoldFill } from "react-icons/ri";
-import { useUserProvider } from "@/provider/User/UserProvider";
-import Loading from "@/app/loading";
+import { usePathname } from "next/navigation";
 
 const Sidebar = () => {
-  const { handleSignOut, user } = useUserProvider();
+  const pathname = usePathname();
+  
+  const admin = [
+    {
+      name: "Home",
+      icon: RiMenuUnfoldFill,
+      href: "/",
+    },
+    {
+      name: "Mails",
+      icon: RiMenuUnfoldFill,
+      href: "/mails",
+    },
+    {
+      name: "Products",
+      icon: RiMenuUnfoldFill,
+      href: "/products",
+    },
+    {
+      name: "Settings",
+      icon: RiMenuUnfoldFill,
+      href: "/settings",
+    },
+  ];
 
-  console.log(user);
-  const navLinks = {
-    admin: [
-      {
-        name: "Home",
-        icon: RiMenuUnfoldFill,
-        href: "/",
-      },
-      {
-        name: "Mails",
-        icon: RiMenuUnfoldFill,
-        href: "/mails",
-      },
-      {
-        name: "Products",
-        icon: RiMenuUnfoldFill,
-        href: "/products",
-      },
-      {
-        name: "Settings",
-        icon: RiMenuUnfoldFill,
-        href: "/settings",
-      },
-      {
-        name: user.name ? "Logout" : "Login",
-        icon: RiMenuUnfoldFill,
-        onclick: user.name ? () => handleSignOut() : null,
-      },
-    ],
-    faculty: [
-      {
-        name: "Home",
-        icon: RiMenuUnfoldFill,
-        href: "/",
-      },
-      {
-        name: "Mails",
-        icon: RiMenuUnfoldFill,
-        href: "/mails",
-      },
-      {
-        name: "Products",
-        icon: RiMenuUnfoldFill,
-        href: "/products",
-      },
-      {
-        name: "Settings",
-        icon: RiMenuUnfoldFill,
-        href: "/settings",
-      },
-      {
-        name: user.name ? "Logout" : "Login",
-        icon: RiMenuUnfoldFill,
-        onclick: user.name ? () => handleSignOut() : null,
-      },
-    ],
-  };
+  const user = [
+    {
+      name: "Home",
+      icon: RiMenuUnfoldFill,
+      href: "/",
+    },
+    {
+      name: "Mails",
+      icon: RiMenuUnfoldFill,
+      href: "/mails",
+    },
+    {
+      name: "Products",
+      icon: RiMenuUnfoldFill,
+      href: "/products",
+    },
+    {
+      name: "Settings",
+      icon: RiMenuUnfoldFill,
+      href: "/settings",
+    },
+  ];
   const [open, setOpen] = useState(false);
+  const routes = pathname.startsWith("/admin") ? admin : user;
   return (
     <>
       <div
@@ -95,30 +83,28 @@ const Sidebar = () => {
           </div>
           <div className="flex-1 justify-between">
             <ul className="pt-2 pb-4 space-y-1 text-sm">
-              <Suspense fallback={<Loading />}>
-                {user.role &&
-                  navLinks[user.role].map((link, index) => (
-                    <li className="rounded-sm" key={index}>
-                      {link.href ? (
-                        <Link
-                          href={link.href}
-                          className="flex items-center p-2 space-x-3 rounded-md"
-                        >
-                          <link.icon className="w-6 h-6 text-gray-100" />
-                          <span className="text-gray-100">{link.name}</span>
-                        </Link>
-                      ) : (
-                        <div
-                          onClick={link.onclick}
-                          className="flex items-center p-2 space-x-3 rounded-md cursor-pointer"
-                        >
-                          <link.icon className="w-6 h-6 text-gray-100" />
-                          <span className="text-gray-100">{link.name}</span>
-                        </div>
-                      )}
-                    </li>
-                  ))}
-              </Suspense>
+              {routes.map((link, index) => (
+                  <li className="rounded-sm" key={index}>
+                    {link.href ? (
+                      <Link
+                        href={link.href}
+                        className="flex items-center p-2 space-x-3 rounded-md"
+                      >
+                        <link.icon className="w-6 h-6 text-gray-100" />
+                        <span className="text-gray-100">{link.name}</span>
+                      </Link>
+                    ) : (
+                      <div
+                        onClick={link.onclick}
+                        className="flex items-center p-2 space-x-3 rounded-md cursor-pointer"
+                      >
+                        <link.icon className="w-6 h-6 text-gray-100" />
+                        <span className="text-gray-100">{link.name}</span>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              {/* </Suspense> */}
             </ul>
           </div>
         </div>

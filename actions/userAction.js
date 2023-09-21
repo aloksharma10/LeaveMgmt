@@ -97,3 +97,10 @@ export async function userSignup(formData) {
 //     };
 //   }
 // }
+
+
+export async function wait(ms){
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
