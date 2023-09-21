@@ -19,7 +19,6 @@ export default withAuth(
           return false;
         }
         const { pathname } = req.nextUrl;
-        console.log("pathname", pathname);
         if (isAdminRoute(pathname) && !checkAdminRole(token)) {
           return NextResponse.rewrite(new URL("/accessdenied?unauthorized=true", req.url));
         }

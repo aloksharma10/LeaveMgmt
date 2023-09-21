@@ -14,7 +14,6 @@ export function Notification({ notifyMessage }) {
       <DropdownMenuTrigger asChild>
         <Button variant="secondary" className="relative h-8 w-8 rounded-full ">
           <Avatar className="h-8 w-8 overflow-visible ">
-            <AvatarImage src="/avatars/01.png" alt="@shadcn" />
             <AvatarFallback>
               <PiBell className="text-xl" />
               <span className="absolute -top-2 -right-2 h-4 w-4 text-xs rounded-full bg-slate-600 text-white flex justify-center items-center items cursor-pointer">

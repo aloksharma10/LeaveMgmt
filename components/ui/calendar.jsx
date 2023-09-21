@@ -13,7 +13,6 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
     borderRadius: "19px",
     background: "red",
   };
-  console.log(new Date("2/1/22"));
   return (
     <DayPicker
       modifiers={{ booked: bookedDays }}

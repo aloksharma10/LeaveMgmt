@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { RiMenuUnfoldFill } from "react-icons/ri";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -57,9 +58,9 @@ const Sidebar = () => {
   return (
     <>
       <div
-        className={`${
-          open ? "w-0" : "lg:w-[17vw] pt-7 p-3"
-        } md:flex flex-col min-h-full bg-gradient-to-br from-gray-900 to-gray-800 shadow-md duration-200 transition-all ease-in-out `}
+        className={cn("md:flex flex-col min-h-full bg-gradient-to-br from-gray-900 to-gray-800 shadow-md duration-200 transition-all ease-in-out", 
+          open ? "w-0" : "lg:w-[17vw] pt-7 px-3"
+        )}
       >
         <div className={`space-y-3 ${open ? "hidden" : "block"}`}>
           <div className="flex items-center justify-between">
