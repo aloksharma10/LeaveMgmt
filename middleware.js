@@ -1,5 +1,5 @@
 import { withAuth } from "next-auth/middleware";
-import { rewrite } from "@vercel/edge";
+import { NextRequest, NextResponse } from 'next/server'
 const isAdminRoute = (pathname) => pathname.includes("/admin");
 
 const checkAdminRole = (token) => token?.role === "admin";
@@ -11,7 +11,7 @@ export default withAuth(
     console.log("middleware", token, pathname);
 
     if (isAdminRoute(pathname) && !checkAdminRole(token)) {
-      return rewrite(new URL("/accessdenied?unauthorized=true", req.url));
+      return NextResponse.rewrite(new URL("/accessdenied?unauthorized=true", req.url));
     }
   },
   {
@@ -24,7 +24,7 @@ export default withAuth(
         const { pathname } = req.nextUrl;
         console.log("pathname", pathname);
         if (isAdminRoute(pathname) && !checkAdminRole(token)) {
-          return rewrite(new URL("/accessdenied?unauthorized=true", req.url));
+          return NextResponse.rewrite(new URL("/accessdenied?unauthorized=true", req.url));
         }
         return Boolean(token);
       },

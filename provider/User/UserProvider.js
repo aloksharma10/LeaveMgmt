@@ -4,7 +4,7 @@ import UserContext from "./UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import { userSignup } from "@/actions/userAction";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 
 function UserProvider({ children }) {
   const router = useRouter();
@@ -88,7 +88,7 @@ function UserProvider({ children }) {
               description:
                 "Your login request has been submitted for approval.",
             });
-            redirect(role.toLowerCase() == "admin" ? "/admin" : "/user");
+            router.push(role.toLowerCase() == "admin" ? "/admin" : "/user");
             break;
         }
       } else {
@@ -98,7 +98,7 @@ function UserProvider({ children }) {
         });
       }
     },
-    [toast]
+    [toast, router]
   );
 
   const handleSignOut = useCallback(async () => {
@@ -111,14 +111,14 @@ function UserProvider({ children }) {
         description: "Logout successfully!",
       });
 
-      redirect('/')
+      return router.push('/')
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Something went wrong!",
       });
     }
-  }, [toast]);
+  }, [toast, router]);
 
 
   return (
