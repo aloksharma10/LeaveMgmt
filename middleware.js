@@ -1,5 +1,5 @@
 import { withAuth } from "next-auth/middleware";
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 const isAdminRoute = (pathname) => pathname.includes("/admin");
 
 const checkAdminRole = (token) => token?.role === "admin";
@@ -8,8 +8,6 @@ export default withAuth(
   function middleware(req) {
     const { token } = req.nextauth;
     const { pathname } = req.nextUrl;
-    console.log("middleware", token, pathname);
-
     if (isAdminRoute(pathname) && !checkAdminRole(token)) {
       return NextResponse.rewrite(new URL("/accessdenied?unauthorized=true", req.url));
     }
@@ -17,8 +15,6 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ req, token }) => {
-        console.log("cookes", req.cookies )
-        console.log("token", token);
         if (!token) {
           return false;
         }

@@ -58,13 +58,13 @@ const Sidebar = () => {
     <>
       <div
         className={`${
-          open ? "w-0" : "w-4/6 lg:w-1/4 pt-7 p-3"
-        } md:flex flex-col min-h-full max-w-[20rem] bg-gradient-to-br from-gray-900 to-gray-800 shadow-md duration-200 transition-all ease-in-out absolute md:static top-0 left-0 z-30 `}
+          open ? "w-0" : "lg:w-[17vw] pt-7 p-3"
+        } md:flex flex-col min-h-full bg-gradient-to-br from-gray-900 to-gray-800 shadow-md duration-200 transition-all ease-in-out `}
       >
         <div className={`space-y-3 ${open ? "hidden" : "block"}`}>
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-white">Dashboard</h2>
-            <button onClick={() => setOpen(!open)}>
+            <button onClick={() => setOpen(!open)} className="hidden lg:block">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -112,7 +112,7 @@ const Sidebar = () => {
       {open && (
         <div
           onClick={() => setOpen(false)}
-          className="fixed top-20 lg:top-6 left-3 lg:left-14 z-30 bg-gray-100 p-2 rounded-md shadow cursor-pointer"
+          className="fixed hidden lg:block lg:top-6 left-3 lg:left-14 z-30 bg-gray-100 p-2 rounded-md shadow cursor-pointer"
         >
           <RiMenuUnfoldFill className="w-6 h-6 text-black" />
         </div>

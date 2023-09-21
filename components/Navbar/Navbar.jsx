@@ -7,16 +7,20 @@ import { Button } from "../ui/button";
 import { UserNav } from "./UserNav";
 import { Notification } from "./Notification";
 import { useUserProvider } from "@/provider/User/UserProvider";
+import MobileSidebar from "../Dashborad/MobileSidebar";
 
 function Navbar() {
   const { user, handleSignOut } = useUserProvider();
 
   return (
     <nav className="w-full rounded-xl z-20 py-4 shadow-lg sticky top-0 backdrop-blur-md bg-white/40">
+      
       <div className="flex items-center justify-between px-4 md:container">
-        <div className="flex items-center cursor-pointer text-md font-bold">
+      <MobileSidebar/>
+
+        <div className="flex items-center cursor-pointer text-md font-bold md:pl-0 pl-10">
           <Logo size={30} />
-          Leave Management
+          <span className="hidden md:block">Leave Management</span>
         </div>
         <ul className="flex space-x-5 items-center cursor-pointer">
           {user.name ? (
