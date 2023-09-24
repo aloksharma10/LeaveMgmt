@@ -1,5 +1,6 @@
 "use server";
 
+import LeavePolicy from "@/lib/models/LeavePolicySchema";
 import UserSchema from "@/lib/models/UserSchema";
 import bcrypt from "bcrypt";
 const { default: dbConn } = require("@/lib/db/dbConn");
@@ -18,26 +19,39 @@ async function connect() {
 export async function userSignup(formData) {
   try {
     if (!conn) await connect();
+
     const hashPass = bcrypt.hashSync(formData.get("password"), 12);
+
+    const { vacation, casual, earned } = await LeavePolicy.findOne().sort({
+      createdAt: -1,
+    });
     const newUser = await UserSchema.create({
       name: formData.get("name"),
       role: formData.get("role"),
       email: formData.get("email"),
       phone: formData.get("phone"),
       password: hashPass,
+      leave: {
+        totalTakenLeave: [],
+        availableLeaves: {
+          earnedLeave: earned.allowedLeaveCount,
+          casualLeave: casual.allowedLeaveCount,
+          vacationLeave: vacation.allowedLeaveCount,
+        },
+      },
     });
     return {
       status: 200,
       message: "User signup Successfully",
     };
   } catch (error) {
+    console.log(error);
     return {
       status: 400,
       message: "Something went wrong!",
     };
   }
 }
-
 
 // Not in use dur to next-auth
 // export async function userLogin(fromData) {
@@ -97,10 +111,3 @@ export async function userSignup(formData) {
 //     };
 //   }
 // }
-
-
-export async function wait(ms){
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-}
