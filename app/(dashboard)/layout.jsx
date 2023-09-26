@@ -1,4 +1,5 @@
 import Sidebar from "@/components/Dashborad/Sidebar";
+import CalendarComponent from "@/components/Dashborad/components/CalendarComponent";
 import Navbar from "@/components/Navbar/Navbar";
 
 export default async function DashboardLayout({ children }) {
@@ -11,6 +12,7 @@ export default async function DashboardLayout({ children }) {
         <Navbar navbg={true} />
         {children}
       </div>
+      <CalendarComponent />
     </div>
   );
 }

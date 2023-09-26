@@ -8,7 +8,8 @@ export default function Home() {
   //  <Dashboard/>
   <Button onClick={()=>{
     applyLeave({
-      userId: '651077f048b150184574627d',
+      userId: '6511d7209677f6959aae545c',
+      title: "Vacation trip title all the way from client",
       startDate: '2023-09-25',
       endDate: '2023-10-30',
       message: 'Vacation trip'

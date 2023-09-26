@@ -45,7 +45,6 @@ export async function userSignup(formData) {
       message: "User signup Successfully",
     };
   } catch (error) {
-    console.log(error);
     return {
       status: 400,
       message: "Something went wrong!",

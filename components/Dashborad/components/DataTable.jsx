@@ -7,25 +7,70 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-export default async function DataTable({invoices}) {
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+export default async function DataTable({ tableData }) {
   return (
     <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
+      <TableCaption>A list of your recent leave </TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="w-[100px]">Status</TableHead>
+          <TableHead>Leave Id</TableHead>
+          <TableHead>Title</TableHead>
+          <TableHead className="text-right">Date Range</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+        {tableData.map((item) => (
+          <TableRow key={item.status} className="overflow-hidden">
+            <TableCell className="font-medium capitalize">
+              {item.status}
+            </TableCell>
+            <TableCell className="w-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    {String(item._id).slice(0, 9)}...
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-sm font-medium">{String(item._id)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </TableCell>
+            <TableCell>            
+            <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    {String(item.title).slice(0, 25)}...
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-sm font-medium">{String(item.title)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            
+            </TableCell>
+            <TableCell className="text-right overflow-hidden">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    {String(new Date(item.startDate).toLocaleDateString())}...
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-sm font-medium">
+                      {String(new Date(item.startDate).toLocaleDateString())}-
+                      {String(new Date(item.endDate).toLocaleDateString())}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

@@ -31,7 +31,7 @@ export const authOptions = {
         const user = await UserSchema.findOne({
           email: credentials.email,
           role: credentials.role,
-        });
+        })
         if (!user) {
           throw new Error("User not found!");
         }
