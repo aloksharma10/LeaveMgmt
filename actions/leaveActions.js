@@ -108,6 +108,7 @@ export async function applyLeave(formData) {
       salaryDeduction,
     });
 
+    user.leave.totalTakenLeave.unshift(leave._id);
     await user.save();
 
     return {
