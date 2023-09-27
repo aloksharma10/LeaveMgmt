@@ -9,7 +9,7 @@ const CalendarComponent = () => {
   const [showCalendar, setShowCalendar] = React.useState(false);
   return (
     <article
-      className="absolute bottom-12 right-10 lg:right-14"
+      className="fixed bottom-12 right-10 lg:right-14 "
       onMouseLeave={() => setShowCalendar(false)}
     >
       <Calendar

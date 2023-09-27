@@ -4,7 +4,8 @@ import UserContext from "./UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import { userSignup } from "@/actions/userAction";
 import { signIn, signOut, useSession } from "next-auth/react";
-import {  useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { applyLeave } from "@/actions/leaveActions";
 
 function UserProvider({ children }) {
   const router = useRouter();
@@ -111,7 +112,7 @@ function UserProvider({ children }) {
         description: "Logout successfully!",
       });
 
-      return router.push('/')
+      return router.push("/");
     } catch (error) {
       toast({
         variant: "destructive",
@@ -120,7 +121,35 @@ function UserProvider({ children }) {
     }
   }, [toast, router]);
 
-
+  const handleApplyLeave = useCallback(
+    async (formData, date) => {
+      const title = formData.get("title");
+      const message = formData.get("message");
+      if (title.length > 2 && date.to > date.from) {
+        const reqLeaveFormData = {
+          title,
+          startDate: date.from,
+          endDate: date.to,
+          message,
+          userId: user.id,
+        };
+        const { status } = await applyLeave(reqLeaveFormData);
+        if (status == 200) {
+          toast({
+            className: "bg-black text-white",
+            title: "Success",
+            description: "Your leave request has been submitted for approval.",
+          });
+        }
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Please enter the valid details!",
+        });
+      }
+    },
+    [toast, user.id]
+  );
   return (
     <UserContext.Provider
       value={{
@@ -128,6 +157,7 @@ function UserProvider({ children }) {
         handleUserSignup,
         handleUserLogin,
         handleSignOut,
+        handleApplyLeave,
       }}
     >
       {children}

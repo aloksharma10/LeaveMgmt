@@ -18,7 +18,9 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
       modifiers={{ booked: bookedDays }}
       modifiersStyles={{ booked: bookedStyle }}
       showOutsideDays={showOutsideDays}
-      className={cn("p-3", className)}
+      minDate={new Date()}
+      disabled={{ before: new Date() }}
+      className={cn("p-4", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
@@ -44,7 +46,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
         day_selected:
           "bg-slate-900 rounded-full text-white hover:bg-slate-900 hover:text-slate-50 focus:bg-slate-900 focus:text-slate-50 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50 dark:hover:text-slate-900 dark:focus:bg-slate-50 dark:focus:text-slate-900",
         day_today:
-          "bg-slate-100  rounded-full text-slate-900 dark:bg-slate-800 dark:text-slate-50",
+          "bg-slate-800  rounded-full text-slate-900 dark:bg-slate-800 dark:text-slate-50",
         day_outside: "text-slate-500 opacity-50 dark:text-slate-400",
         day_disabled: "text-slate-500 opacity-50 dark:text-slate-400",
         day_range_middle:

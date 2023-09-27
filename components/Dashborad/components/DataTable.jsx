@@ -35,10 +35,10 @@ export default async function DataTable({ tableData }) {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    {String(item._id).slice(0, 9)}...
+                    {String(item.id).slice(0, 9)}...
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p className="text-sm font-medium">{String(item._id)}</p>
+                    <p className="text-sm font-medium">{String(item.id)}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

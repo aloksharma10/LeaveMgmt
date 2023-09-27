@@ -43,7 +43,7 @@ export default async function Dashboard() {
 
   const leaveData = await getLeaveData(getSession.user.id, 5);
   return (
-    <div className="container mx-auto space-y-3 px-3">
+    <div className="relative container min-h-screen mx-auto space-y-3 px-3">
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         <Suspense fallback={<span>Laoding...</span>}>
           <Card>

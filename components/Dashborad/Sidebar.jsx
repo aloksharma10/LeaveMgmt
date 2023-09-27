@@ -41,17 +41,17 @@ const Sidebar = () => {
     {
       name: "Leave Request",
       icon: MessageCircle,
-      href: "/leave-request",
+      href: "/user/leave-request",
     },
     {
       name: "Report",
       icon: BarChart3,
-      href: "/reports",
+      href: "/user/reports",
     },
     {
       name: "Settings",
       icon: Settings,
-      href: "/profile",
+      href: "/user/profile",
     },
   ];
   const [open, setOpen] = useState(false);

@@ -216,9 +216,21 @@ export async function getLeaveData(userId, dataLimit) {
     if (!leaveData) {
       throw new Error("User not found");
     }
+    const leaveDataList = leaveData.leave.totalTakenLeave.map((leave) => ({
+      id: String(leave._id),
+      title: leave.title,
+      startDate: leave.startDate,
+      endDate: leave.endDate,
+      message: leave.message,
+      status: leave.status,
+      casualLeaveCount: leave.casualLeaveCount,
+      earnedLeaveCount: leave.earnedLeaveCount,
+      vacationLeaveCount: leave.vacationLeaveCount,
+      salaryDeduction: leave.salaryDeduction,
+    }));
     return {
       status: 200,
-      data: leaveData.leave.totalTakenLeave,
+      data: leaveDataList,
     };
   } catch (error) {
     return {

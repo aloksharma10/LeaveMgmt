@@ -4,20 +4,20 @@ import { NextResponse } from "next/server";
 const isAdminRoute = (pathname) => pathname.includes("/admin");
 const isUserRoute = (pathname) => pathname.includes("/user");
 
-const checkUserRole = (token, role) => token?.role === role;
+const checkUserRole = (token, roles) => roles.includes(token?.role);
 
 export default withAuth(
   function middleware(req) {
     const { token } = req.nextauth;
     const { pathname } = req.nextUrl;
 
-    if (isAdminRoute(pathname) && !checkUserRole(token, "admin")) {
+    if (isAdminRoute(pathname) && !checkUserRole(token, ["admin"])) {
       return NextResponse.rewrite(
         new URL("/accessdenied?unauthorized=true", req.url)
       );
     }
 
-    if (isUserRoute(pathname) && !checkUserRole(token, "user")) {
+    if (isUserRoute(pathname) && !checkUserRole(token, ["faculty", "staff"])) {
       return NextResponse.rewrite(
         new URL("/accessdenied?unauthorized=true", req.url)
       );
@@ -29,15 +29,16 @@ export default withAuth(
         if (!token) {
           return false;
         }
+
         const { pathname } = req.nextUrl;
 
-        if (isAdminRoute(pathname) && !checkUserRole(token, "admin")) {
+        if (isAdminRoute(pathname) && !checkUserRole(token, ["admin"])) {
           return NextResponse.rewrite(
             new URL("/accessdenied?unauthorized=true", req.url)
           );
         }
 
-        if (isUserRoute(pathname) && !checkUserRole(token, "user")) {
+        if (isUserRoute(pathname) && !checkUserRole(token, ["faculty", "staff"])) {
           return NextResponse.rewrite(
             new URL("/accessdenied?unauthorized=true", req.url)
           );
