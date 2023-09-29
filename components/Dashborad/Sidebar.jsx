@@ -60,15 +60,14 @@ const Sidebar = () => {
       href: "/user/profile",
     },
   ];
-  const [open, setOpen] = useState(false);
+  const open = false;
   const routes = pathname.startsWith("/admin") ? admin : user;
 
   return (
     <>
       <div
         className={cn(
-          "md:flex flex-col min-h-full bg-gradient-to-br from-gray-900 to-gray-800 shadow-md duration-200 transition-all ease-in-out",
-          open ? "w-0" : "lg:w-full xl:w-[19vw] pt-7 px-3"
+          "md:flex flex-col min-h-full bg-gradient-to-br from-gray-900 to-gray-800 shadow-md duration-200 transition-all ease-in-out lg:w-full xl:w-[19vw] pt-7 px-3",
         )}
       >
         <div className={`space-y-3 fixed block`}>
