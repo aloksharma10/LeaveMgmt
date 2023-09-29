@@ -17,7 +17,7 @@ const CalendarComponent = () => {
         selected={date}
         onSelect={setDate}
         className={cn(
-          "w-72 rounded-md border z-10 mb-5 bg-white shadow-lg",
+          "rounded-md border z-10 mb-5 bg-white shadow-lg",
           showCalendar ? "block" : "hidden"
         )}
         showOutsideDays={false}

@@ -154,13 +154,25 @@ function UserProvider({ children }) {
   const handleUserMonthlyReport = useCallback(
     async (date) => {
       try {
-        const res = await getUserLeaveReport(user.id, date.from, date.to);
+        const reportStartDate = new Date(date.from).toISOString().split("T")[0];
+        const reportEndDate = new Date(date.to).toISOString().split("T")[0];
+        const res = await getUserLeaveReport(
+          user.id,
+          reportStartDate,
+          reportEndDate
+        );
+        toast({
+          className: "bg-black text-white",
+          title: "Success",
+          description: `You are viewing the latest leave report ${reportStartDate} to ${reportEndDate}`,
+        });
+
         return res;
       } catch (error) {
-        return null;
+        return [];
       }
     },
-    [user.id]
+    [toast, user.id]
   );
   return (
     <UserContext.Provider

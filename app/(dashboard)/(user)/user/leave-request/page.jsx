@@ -30,7 +30,6 @@ const LeaveRequest = async () => {
 
   const [tableData, { vacationMonths, earnedCycle, casualCycle }] =
     await Promise.all([tableDataPromise, leavePolicyPromise]);
- console.log(tableData.data)
   return (
     <div className="container xl:flex justify-center space-y-5 xl:space-y-0 xl:space-x-5">
       <div className="flex w-full flex-col space-y-6 lg:max-w-lg ">

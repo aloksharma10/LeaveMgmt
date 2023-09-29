@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,14 @@ import DatePickerWithRange from "@/components/Dashborad/components/DatePickerWit
 
 const UserReport = () => {
   const { handleUserMonthlyReport } = useUserProvider();
-  const defaultFromDate = new Date();
-const defaultToDate = defaultFromDate.setDate(1);
+  const defaultToDate = new Date();
+  const defaultFromDate = new Date(
+    defaultToDate.getFullYear(),
+    defaultToDate.getMonth(),
+    1
+  );
 
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState([{}]);
   const [date, setDate] = useState({
     from: defaultFromDate,
     to: defaultToDate,
@@ -24,7 +28,6 @@ const defaultToDate = defaultFromDate.setDate(1);
   useEffect(() => {
     async function fetchData() {
       const data = await handleUserMonthlyReport(date);
-      console.log(data);
       setTableData(data);
     }
     fetchData();
@@ -44,7 +47,10 @@ const defaultToDate = defaultFromDate.setDate(1);
         </CardHeader>
         <CardContent className="pl-2">
           <Suspense fallback={<>Loading...</>}>
-            <UserTable data={tableData.data ? tableData.data : [] } columns={leaveReportColumns} />
+            <UserTable
+              data={tableData.data ? tableData.data : []}
+              columns={leaveReportColumns}
+            />
           </Suspense>
         </CardContent>
       </Card>

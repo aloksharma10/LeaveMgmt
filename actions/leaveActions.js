@@ -242,15 +242,19 @@ export async function getLeaveData(userId, dataLimit) {
   }
 }
 
-export async function getUserLeaveReport(userId, startDateObj, endDateObj) {
+export async function getUserLeaveReport(
+  userId,
+  reportStartDate,
+  reportEndDate
+) {
   try {
     if (!conn) await connect();
 
-    const reportStartDate = new Date(startDateObj).toISOString().split("T")[0];
-    const reportEndDate = new Date(endDateObj).toISOString().split("T")[0];
-
-    if (new Date(reportStartDate) > new Date(reportEndDate)) {
-      throw new Error("Start date must be less than or equal to end date");
+    if (reportStartDate > reportEndDate) {
+      return {
+        status: 400,
+        message: "Start date must be less than or equal to end date",
+      };
     }
     const leaveData = await Leave.find({
       user: userId,
@@ -259,7 +263,10 @@ export async function getUserLeaveReport(userId, startDateObj, endDateObj) {
     }).sort({ createdAt: -1 });
 
     if (!leaveData || leaveData.length === 0) {
-      throw new Error("No leave found for the specified date range");
+      return {
+        status: 400,
+        message: "No leave data found",
+      };
     }
 
     const leaveDataList = leaveData.map((leave) => ({
@@ -279,11 +286,32 @@ export async function getUserLeaveReport(userId, startDateObj, endDateObj) {
       data: leaveDataList,
     };
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return {
       status: 400,
       message: error.message || "Something went wrong!",
     };
+  }
+}
+
+export async function deleteLeave(leaveId) {
+  try {
+    const deleteLeave = await Leave.findByIdAndDelete(leaveId);
+    if (!deleteLeave) {
+      return {
+        status: 400,
+        message: "Leave not found",
+      };
+    }
+    return {
+      status: 200,
+      message: "Leave deleted successfully",
+    };
+  } catch (error) {
+    return {
+      status: 400,
+      message: "Something went wrong!",
+    }
   }
 }
 
