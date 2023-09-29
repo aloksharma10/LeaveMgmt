@@ -124,7 +124,7 @@ export const columns = [
       if (rowData.status === "pending") {
         return <LeaveModel leave={rowData} />;
       } else {
-        return <CircleOff className="w-5 mx-auto " disabled={true} />;
+        return <CircleOff className="w-5 mx-auto" disabled={true} />;
       }
     },
   },

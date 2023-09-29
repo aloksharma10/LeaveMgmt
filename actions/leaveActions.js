@@ -286,7 +286,6 @@ export async function getUserLeaveReport(
       data: leaveDataList,
     };
   } catch (error) {
-    console.log(error)
     return {
       status: 400,
       message: error.message || "Something went wrong!",
@@ -296,6 +295,7 @@ export async function getUserLeaveReport(
 
 export async function deleteLeave(leaveId) {
   try {
+    console.log(leaveId);
     const deleteLeave = await Leave.findByIdAndDelete(leaveId);
     if (!deleteLeave) {
       return {
@@ -303,6 +303,8 @@ export async function deleteLeave(leaveId) {
         message: "Leave not found",
       };
     }
+    revalidatePath(["/user/leave-request", "/user/reports"]);
+    // revalidatePath("/user/reports");
     return {
       status: 200,
       message: "Leave deleted successfully",
@@ -311,7 +313,7 @@ export async function deleteLeave(leaveId) {
     return {
       status: 400,
       message: "Something went wrong!",
-    }
+    };
   }
 }
 

@@ -105,7 +105,7 @@ const LeaveRequest = async () => {
           </CardFooter>
         </Card>
       </div>
-      <Card className="col-span-4">
+      <Card className="col-span-4 w-7/12">
         <CardHeader>
           <CardTitle>Leave History</CardTitle>
         </CardHeader>

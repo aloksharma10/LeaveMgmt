@@ -10,6 +10,9 @@ import UserTable from "@/components/Dashborad/components/UserTable";
 import { useUserProvider } from "@/provider/User/UserProvider";
 import DatePickerWithRange from "@/components/Dashborad/components/DatePickerWithRange";
 
+export const dynamic = "force-dynamic";
+
+
 const UserReport = () => {
   const { handleUserMonthlyReport } = useUserProvider();
   const defaultToDate = new Date();
