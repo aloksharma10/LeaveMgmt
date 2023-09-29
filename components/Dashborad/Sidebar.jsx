@@ -60,7 +60,6 @@ const Sidebar = () => {
       href: "/user/profile",
     },
   ];
-  const open = false;
   const routes = pathname.startsWith("/admin") ? admin : user;
 
   return (
