@@ -1,65 +1,122 @@
+import { Suspense } from "react";
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { getLeaveData } from "@/actions/leaveActions";
+import { getLeaveData, leavePolicyCycle } from "@/actions/leaveActions";
 
 import ApplyLeaveForm from "@/components/Dashborad/components/ApplyLeaveForm";
 import UserTable from "@/components/Dashborad/components/UserTable";
-import { Suspense } from "react";
+
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Button } from "@/components/ui/button";
+import { columns } from "@/components/Dashborad/components/tableColumn";
 
 const LeaveRequest = async () => {
   const getSession = await getServerSession(authOptions);
 
-  const tableData = await getLeaveData(getSession.user.id);
-  console.log(tableData);
-  const data = [
-    {
-      id: "m5gr84i9",
-      amount: 316,
-      status: "success",
-      email: "ken99@yahoo.com",
-    },
-    {
-      id: "3u1reuv4",
-      amount: 242,
-      status: "success",
-      email: "Abe45@gmail.com",
-    },
-    {
-      id: "derv1ws0",
-      amount: 837,
-      status: "processing",
-      email: "Monserrat44@gmail.com",
-    },
-    {
-      id: "5kma53ae",
-      amount: 874,
-      status: "success",
-      email: "Silas22@gmail.com",
-    },
-    {
-      id: "bhqecj4p",
-      amount: 721,
-      status: "failed",
-      email: "carmella@hotmail.com",
-    },
-  ];
+  const tableDataPromise = getLeaveData(getSession.user.id,15);
+  const leavePolicyPromise = leavePolicyCycle();
 
+  const [tableData, { vacationMonths, earnedCycle, casualCycle }] =
+    await Promise.all([tableDataPromise, leavePolicyPromise]);
+ console.log(tableData.data)
   return (
-    <div className="lg:p-8 lg:flex justify-evenly">
-      <div className="flex w-full flex-col justify-center space-y-6 lg:max-w-lg ">
-        <ApplyLeaveForm />
+    <div className="container xl:flex justify-center space-y-5 xl:space-y-0 xl:space-x-5">
+      <div className="flex w-full flex-col space-y-6 lg:max-w-lg ">
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-left">
+              Request New Leave!
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ApplyLeaveForm />
+          </CardContent>
+          <CardFooter className="justify-evenly hidden lg:flex">
+            <HoverCard>
+              <HoverCardTrigger>
+                <Button variant="secondary" className="font-semibold">
+                  Leave deduction policy
+                </Button>
+              </HoverCardTrigger>
+              <HoverCardContent align="top">
+                <div className="text-sm">
+                  <span className="font-medium">Leave deduction policy</span>
+                  <ul className="list-disc pl-5 text-xs">
+                    <li>Casual leave deducted first</li>
+                    <li>then Earned leave.</li>
+                    <li>
+                      Vacation leave used only if allowed, prioritized over
+                      Casual leave.
+                    </li>
+                  </ul>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+            <HoverCard>
+              <HoverCardTrigger>
+                <Button variant="outline">Casual</Button>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <p className="text-sm font-medium">
+                  Leave resets at every {casualCycle}
+                  <span className="text-gray-500 text-xs">/months</span>
+                </p>
+              </HoverCardContent>
+            </HoverCard>
+            <HoverCard>
+              <HoverCardTrigger>
+                <Button variant="outline">Earned</Button>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <p className="text-sm font-medium">
+                  Leave resets at every {earnedCycle}
+                  <span className="text-gray-500 text-xs align-baseline">
+                    /months
+                  </span>
+                </p>
+              </HoverCardContent>
+            </HoverCard>
+            <HoverCard>
+              <HoverCardTrigger>
+                <Button variant="outline">Vacation</Button>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <p className="text-sm font-medium">
+                  Leave allowed for{" "}
+                  {vacationMonths.map((month) => (
+                    <span className="" key={month}>
+                      {month},{" "}
+                    </span>
+                  ))}
+                </p>
+              </HoverCardContent>
+            </HoverCard>
+          </CardFooter>
+        </Card>
       </div>
-      <div className="w-2/5">
-        <Suspense
-          fallback={
-            <div className="flex justify-center items-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-            </div>
-          }
-        >
-          <UserTable data={tableData.data} />
-        </Suspense>
-      </div>
+      <Card className="col-span-4">
+        <CardHeader>
+          <CardTitle>Leave History</CardTitle>
+        </CardHeader>
+        <CardContent className="pl-2">
+          <Suspense fallback={<>Loading...</>}>
+            <UserTable data={tableData.data} columns={columns} />
+          </Suspense>
+        </CardContent>
+      </Card>
+      
     </div>
   );
 };

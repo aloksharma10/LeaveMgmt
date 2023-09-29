@@ -11,10 +11,10 @@ export default async function DashboardLayout({ children }) {
   
   return (
     <div className="md:flex relative">
-      <div className="hidden lg:block ">
+      <div className="hidden xl:block ">
         <Sidebar />
       </div>
-      <div className="w-full min-h-screen lg:px-10 pt-28 px-3 ">
+      <div className="w-full min-h-screen lg:px-11 pt-28 px-3 ">
         <Navbar navbg={true} />
         {children}
       </div>

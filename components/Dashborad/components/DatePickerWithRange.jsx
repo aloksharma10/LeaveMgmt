@@ -13,13 +13,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export default function DatePickerWithRange({ className }) {
-  const defaultFromDate = new Date();
-
-  const [date, setDate] = React.useState({
-    from: defaultFromDate,
-    to: defaultFromDate
-  });
+export default function DatePickerWithRange({ className, date, setDate }) {
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -48,9 +42,10 @@ export default function DatePickerWithRange({ className }) {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto p-0" align="end">
           <Calendar
             initialFocus
+            disabled={{ after: new Date() }}
             mode="range"
             defaultMonth={date?.from}
             selected={date}

@@ -19,7 +19,6 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
       modifiersStyles={{ booked: bookedStyle }}
       showOutsideDays={showOutsideDays}
       minDate={new Date()}
-      disabled={{ before: new Date() }}
       className={cn("p-4", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",

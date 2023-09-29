@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { userSignup } from "@/actions/userAction";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { applyLeave } from "@/actions/leaveActions";
+import { applyLeave, getUserLeaveReport } from "@/actions/leaveActions";
 
 function UserProvider({ children }) {
   const router = useRouter();
@@ -150,6 +150,18 @@ function UserProvider({ children }) {
     },
     [toast, user.id]
   );
+
+  const handleUserMonthlyReport = useCallback(
+    async (date) => {
+      try {
+        const res = await getUserLeaveReport(user.id, date.from, date.to);
+        return res;
+      } catch (error) {
+        return null;
+      }
+    },
+    [user.id]
+  );
   return (
     <UserContext.Provider
       value={{
@@ -158,6 +170,7 @@ function UserProvider({ children }) {
         handleUserLogin,
         handleSignOut,
         handleApplyLeave,
+        handleUserMonthlyReport,
       }}
     >
       {children}

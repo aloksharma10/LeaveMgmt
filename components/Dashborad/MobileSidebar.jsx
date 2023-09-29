@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 const MobileSidebar = () => {
   return (
     <Sheet>
-      <SheetTrigger className="lg:hidden hover:opacity-75 transition">
+      <SheetTrigger className="xl:hidden hover:opacity-75 transition">
         <Menu />
       </SheetTrigger>
       <SheetContent side="left" className='p-0'>

@@ -19,10 +19,10 @@ export default async function DataTable({ tableData }) {
       <TableCaption>A list of your recent leave </TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Status</TableHead>
-          <TableHead>Leave Id</TableHead>
-          <TableHead>Title</TableHead>
-          <TableHead className="text-right">Date Range</TableHead>
+          <TableHead className="text-center">Status</TableHead>
+          <TableHead className="text-center">Leave Id</TableHead>
+          <TableHead className="text-center">Title</TableHead>
+          <TableHead className="text-center">Date Range</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -35,7 +35,9 @@ export default async function DataTable({ tableData }) {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    {String(item.id).slice(0, 9)}...
+                    <p className="text-sm w-28 font-medium text-ellipsis whitespace-nowrap overflow-clip">
+                      {String(item.id)}
+                    </p>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-sm font-medium">{String(item.id)}</p>
@@ -43,29 +45,31 @@ export default async function DataTable({ tableData }) {
                 </Tooltip>
               </TooltipProvider>
             </TableCell>
-            <TableCell>            
-            <TooltipProvider>
+            <TableCell>
+              <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger>
-                    {String(item.title).slice(0, 25)}...
+                  <TooltipTrigger className="text-left text-ellipsis whitespace-nowrap overflow-clip">
+                    <p className="text-sm w-28 font-medium text-ellipsis whitespace-nowrap overflow-clip">
+                      {String(item.title).slice(0, 25)}
+                    </p>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-sm font-medium">{String(item.title)}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            
             </TableCell>
-            <TableCell className="text-right overflow-hidden">
+            <TableCell>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    {String(new Date(item.startDate).toLocaleDateString())}...
+                    <p className="text-sm w-28 font-medium text-ellipsis whitespace-nowrap overflow-clip">
+                    {item.startDate}-{item.endDate}
+                    </p>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-sm font-medium">
-                      {String(new Date(item.startDate).toLocaleDateString())}-
-                      {String(new Date(item.endDate).toLocaleDateString())}
+                      {item.startDate}-{item.endDate}
                     </p>
                   </TooltipContent>
                 </Tooltip>

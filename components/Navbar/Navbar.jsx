@@ -17,7 +17,7 @@ function Navbar({ navbg }) {
     <nav
       className={cn(
         "w-full rounded-xl z-20 py-4 shadow-xl fixed top-0 backdrop-blur-md bg-white/40",
-        navbg && "bg-gray-200 mt-5 w-[94%] md:w-[97%] lg:w-[79%]"
+        navbg && "bg-gray-200 mt-5 w-[94%] md:w-[97%] lg:w-[93%] xl:w-[76%]"
       )}
     >
       <div className="flex items-center justify-between px-4 md:container">

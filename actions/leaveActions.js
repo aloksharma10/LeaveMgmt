@@ -4,6 +4,7 @@ const { default: dbConn } = require("@/lib/db/dbConn");
 import LeavePolicy from "@/lib/models/LeavePolicySchema";
 import Leave from "@/lib/models/LeaveSchema";
 import UserSchema from "@/lib/models/UserSchema";
+import { revalidatePath } from "next/cache";
 
 let conn = false;
 
@@ -99,6 +100,7 @@ export async function applyLeave(formData) {
 
     user.leave.totalTakenLeave.unshift(leave._id);
     await user.save();
+    revalidatePath("/user/leave-request");
 
     return {
       status: 200,
@@ -211,22 +213,22 @@ export async function getLeaveData(userId, dataLimit) {
     if (!conn) await connect();
     const leaveData = await UserSchema.findById(userId).populate({
       path: "leave.totalTakenLeave",
-      options: { limit: dataLimit },
+      options: { sort: { createdAt: -1 }, limit: dataLimit },
     });
     if (!leaveData) {
       throw new Error("User not found");
     }
     const leaveDataList = leaveData.leave.totalTakenLeave.map((leave) => ({
       id: String(leave._id),
-      title: leave.title,
-      startDate: leave.startDate,
-      endDate: leave.endDate,
-      message: leave.message,
-      status: leave.status,
-      casualLeaveCount: leave.casualLeaveCount,
-      earnedLeaveCount: leave.earnedLeaveCount,
-      vacationLeaveCount: leave.vacationLeaveCount,
-      salaryDeduction: leave.salaryDeduction,
+      title: String(leave.title),
+      startDate: String(new Date(leave.startDate).toLocaleDateString()),
+      endDate: String(new Date(leave.endDate).toLocaleDateString()),
+      message: String(leave.message),
+      status: String(leave.status),
+      casualLeaveCount: String(leave.casualLeaveCount),
+      earnedLeaveCount: String(leave.earnedLeaveCount),
+      vacationLeaveCount: String(leave.vacationLeaveCount),
+      salaryDeduction: String(leave.salaryDeduction),
     }));
     return {
       status: 200,
@@ -236,6 +238,51 @@ export async function getLeaveData(userId, dataLimit) {
     return {
       status: 400,
       message: "Something went wrong!",
+    };
+  }
+}
+
+export async function getUserLeaveReport(userId, startDateObj, endDateObj) {
+  try {
+    if (!conn) await connect();
+
+    const reportStartDate = new Date(startDateObj).toISOString().split("T")[0];
+    const reportEndDate = new Date(endDateObj).toISOString().split("T")[0];
+
+    if (new Date(reportStartDate) > new Date(reportEndDate)) {
+      throw new Error("Start date must be less than or equal to end date");
+    }
+    const leaveData = await Leave.find({
+      user: userId,
+      startDate: { $gte: reportStartDate },
+      endDate: { $lte: reportEndDate },
+    }).sort({ createdAt: -1 });
+
+    if (!leaveData || leaveData.length === 0) {
+      throw new Error("No leave found for the specified date range");
+    }
+
+    const leaveDataList = leaveData.map((leave) => ({
+      id: String(leave._id),
+      title: String(leave.title),
+      startDate: String(new Date(leave.startDate).toLocaleDateString()),
+      endDate: String(new Date(leave.endDate).toLocaleDateString()),
+      message: String(leave.message),
+      status: String(leave.status),
+      casualLeaveCount: String(leave.casualLeaveCount),
+      earnedLeaveCount: String(leave.earnedLeaveCount),
+      vacationLeaveCount: String(leave.vacationLeaveCount),
+      salaryDeduction: String(leave.salaryDeduction),
+    }));
+    return {
+      status: 200,
+      data: leaveDataList,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 400,
+      message: error.message || "Something went wrong!",
     };
   }
 }

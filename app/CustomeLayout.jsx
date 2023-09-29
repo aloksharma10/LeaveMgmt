@@ -7,8 +7,8 @@ export default function CustomeLayout({ children }) {
     <SessionProvider>
       <ProgressBar
         height="3px"
-        color="black"
-        options={{ showSpinner: false }}
+        color="gray"
+        options={{ showSpinner: true }}
         shallowRouting
       />
       {children}
