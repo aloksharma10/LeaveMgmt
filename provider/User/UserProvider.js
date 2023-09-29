@@ -5,7 +5,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { userSignup } from "@/actions/userAction";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { applyLeave, getUserLeaveReport } from "@/actions/leaveActions";
+import {
+  applyLeave,
+  deleteLeave,
+  getUserLeaveReport,
+} from "@/actions/leaveActions";
+import { sendMail } from "@/actions/genrateReport";
 
 function UserProvider({ children }) {
   const router = useRouter();
@@ -174,6 +179,47 @@ function UserProvider({ children }) {
     },
     [toast, user.id]
   );
+
+  const handleLeaveDelete = useCallback(
+    async (leaveId) => {
+      try {
+        const res = await deleteLeave(leaveId, user.id);
+        toast({
+          className: "bg-black text-white",
+          title: "Success",
+          description: `Leave deleted successfully`,
+        });
+      } catch (error) {
+        console.log(error);
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: `Failed to delete leave`,
+        });
+      }
+    },
+    [toast, user.id]
+  );
+
+  const handleSendReport = useCallback(
+    async (reportData) => {
+      try {
+       const sendReport = await sendMail()
+        toast({
+          className: "bg-black text-white",
+          title: "Success",
+          description: `report has been sent on your email ${user.email}`,
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: `Failed to Send Report`,
+        });
+      }
+    },
+    [toast, user.email]
+  );
   return (
     <UserContext.Provider
       value={{
@@ -183,6 +229,8 @@ function UserProvider({ children }) {
         handleSignOut,
         handleApplyLeave,
         handleUserMonthlyReport,
+        handleLeaveDelete,
+        handleSendReport,
       }}
     >
       {children}

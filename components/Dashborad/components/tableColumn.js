@@ -1,8 +1,5 @@
 "use client";
-import {
-  ArrowUpDown,
-  CircleOff,
-} from "lucide-react";
+import { ArrowUpDown, CircleOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import LeaveModel from "./LeaveModel";
+import { Label } from "@/components/ui/label";
 
 export const columns = [
   {
@@ -183,7 +181,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="capitalize w-36 text-left text-ellipsis whitespace-nowrap overflow-clip ">
+            <div className="capitalize w-28 text-left text-ellipsis whitespace-nowrap overflow-clip ">
               {row.getValue("title")}
             </div>
           </TooltipTrigger>
@@ -302,18 +300,32 @@ export const leaveReportColumns = [
       </TooltipProvider>
     ),
   },
-
   {
-    id: "actions",
-    header: "Actions",
-    enableHiding: false,
+    accessorKey: "rejectedReason",
+    header: "Rejected Reason",
     cell: ({ row }) => {
       const rowData = row.original;
       if (rowData.status === "pending") {
-        return <LeaveModel leave={rowData} />;
-      } else {
-        return <CircleOff className="w-5 mx-auto " disabled={true} />;
+        return <Label>Waiting for the response...</Label>
       }
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="capitalize w-28 text-ellipsis whitespace-nowrap overflow-clip ">
+                {row.getValue("rejectedReason")
+                  ? row.getValue("rejectedReason")
+                  : "No Message..."}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{row.getValue("rejectedReason")
+                  ? row.getValue("rejectedReason")
+                  : "No Message..."}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
     },
   },
 ];

@@ -293,9 +293,8 @@ export async function getUserLeaveReport(
   }
 }
 
-export async function deleteLeave(leaveId) {
+export async function deleteLeave(leaveId, userId) {
   try {
-    console.log(leaveId);
     const deleteLeave = await Leave.findByIdAndDelete(leaveId);
     if (!deleteLeave) {
       return {
@@ -303,8 +302,17 @@ export async function deleteLeave(leaveId) {
         message: "Leave not found",
       };
     }
+    const user = await UserSchema.findById(userId);
+    if (!user) {
+      return {
+        status: 400,
+        message: "User not found",
+      };
+    }
+    const leaveIndex = user.leave.totalTakenLeave.indexOf(leaveId);
+    user.leave.totalTakenLeave.splice(leaveIndex, 1);
+    await user.save();
     revalidatePath(["/user/leave-request", "/user/reports"]);
-    // revalidatePath("/user/reports");
     return {
       status: 200,
       message: "Leave deleted successfully",

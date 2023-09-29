@@ -1,4 +1,3 @@
-import { deleteLeave } from "@/actions/leaveActions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,11 +9,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "@/components/ui/use-toast";
+import { useUserProvider } from "@/provider/User/UserProvider";
 import { Trash2 } from "lucide-react";
 
 const LeaveModel = ({ leave }) => {
-  const { toast } = useToast();
+  const { handleLeaveDelete } = useUserProvider();
 
   return (
     <AlertDialog>
@@ -34,8 +33,7 @@ const LeaveModel = ({ leave }) => {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              deleteLeave(leave.id);
-              toast({ title: "success" });
+              handleLeaveDelete(leave.id);
             }}
           >
             Continue

@@ -3,7 +3,6 @@
 import puppeteer from "puppeteer";
 import { SMTPClient } from "emailjs";
 import { readFile } from "fs/promises";
-import html from "@/components/";
 
 // export async function generateReportCSV() {
 //   try {
@@ -105,7 +104,15 @@ export async function sendMail() {
       ],
     });
     console.log(message);
+    return{
+      status: 200,
+      message: "email sent successfully"
+    }
   } catch (err) {
     console.error(err);
+    return {
+      status: 500,
+      message: "something went wrong"
+    }
   }
 }
