@@ -1,5 +1,6 @@
-"use client"
+"use client";
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -69,7 +70,7 @@ const Sidebar = () => {
           open ? "w-0" : "lg:w-full xl:w-[19vw] pt-7 px-3"
         )}
       >
-        <div className={`space-y-3 fixed`}>
+        <div className={`space-y-3 fixed block`}>
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-white">Dashboard</h2>
             {/* <button onClick={() => setOpen(!open)} className="hidden lg:block">
