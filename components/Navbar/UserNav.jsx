@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 import { PiUser } from "react-icons/pi";
 
 export function UserNav({ user, handleSignOut }) {
@@ -34,17 +35,14 @@ export function UserNav({ user, handleSignOut }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Leave History
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Profile
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut}>
+          <Link href="/user/reports">
+            <DropdownMenuItem>Leave History</DropdownMenuItem>
+          </Link>
+          <DropdownMenuItem onClick={handleSignOut} className="text-red-500">
           Log out
         </DropdownMenuItem>
+        </DropdownMenuGroup>
+        
       </DropdownMenuContent>
     </DropdownMenu>
   );

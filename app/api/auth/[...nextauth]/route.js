@@ -10,7 +10,6 @@ async function connect() {
   try {
     await dbConn();
     conn = true;
-    console.log("MongoDB connected", conn);
   } catch (error) {
     throw new Error("MongoDB not connected", error);
   }

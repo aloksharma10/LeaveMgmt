@@ -1,6 +1,6 @@
 "use server";
 
-const { default: dbConn } = require("@/lib/db/dbConn");
+import  dbConn  from "@/lib/db/dbConn";
 import LeavePolicy from "@/lib/models/LeavePolicySchema";
 import Leave from "@/lib/models/LeaveSchema";
 import UserSchema from "@/lib/models/UserSchema";
@@ -12,7 +12,6 @@ async function connect() {
   try {
     await dbConn();
     conn = true;
-    console.log("MongoDB connected");
   } catch (error) {
     throw new Error("MongoDB connection failed", error);
   }

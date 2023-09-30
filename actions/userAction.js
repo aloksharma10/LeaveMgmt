@@ -10,7 +10,6 @@ async function connect() {
   try {
     await dbConn();
     conn = true;
-    console.log("MongoDB connected");
   } catch (error) {
     throw new Error("MongoDB connection failed", error);
   }
@@ -103,7 +102,6 @@ export async function userSignup(formData) {
 //       message: "User login Successfully",
 //     };
 //   } catch (error) {
-//     console.log(error);
 //     return {
 //       status: 500,
 //       message: "Something went wrong!",

@@ -4,7 +4,7 @@ import UserContext from "./UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import { userSignup } from "@/actions/userAction";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import {
   applyLeave,
   deleteLeave,
@@ -18,7 +18,12 @@ function UserProvider({ children }) {
 
   const [user, setUser] = useState({});
 
-  const { data: session } = useSession();
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push("/");
+    },
+  });
   useEffect(() => {
     if (session?.user) {
       setUser(session.user);
@@ -94,7 +99,10 @@ function UserProvider({ children }) {
               description:
                 "Your login request has been submitted for approval.",
             });
-            router.push(role.toLowerCase() == "admin" ? "/admin" : "/user");
+            // router.push(role.toLowerCase() == "admin" ? "/admin" : "/user");
+            redirect(
+              role.toLowerCase() == "admin" ? "/admin" : "/user","push");
+
             break;
         }
       } else {
@@ -104,7 +112,7 @@ function UserProvider({ children }) {
         });
       }
     },
-    [toast, router]
+    [toast]
   );
 
   const handleSignOut = useCallback(async () => {
@@ -119,12 +127,13 @@ function UserProvider({ children }) {
 
       return router.push("/");
     } catch (error) {
+      console.log("error", error);
       toast({
         variant: "destructive",
         title: "Something went wrong!",
       });
     }
-  }, [toast, router]);
+  }, [router, toast]);
 
   const handleApplyLeave = useCallback(
     async (formData, date) => {
@@ -226,14 +235,16 @@ function UserProvider({ children }) {
             description: `No approved leave found to send report`,
           });
         }
-        const sendReport = await generateReportPDF(approvedLeave,date, {name: user.name, email: user.email});
+        const sendReport = await generateReportPDF(approvedLeave, date, {
+          name: user.name,
+          email: user.email,
+        });
         toast({
           className: "bg-black text-white",
           title: "Success",
           description: `report has been sent on your email ${user.email}`,
         });
       } catch (error) {
-        console.log(error);
         toast({
           variant: "destructive",
           title: "Something went wrong",
