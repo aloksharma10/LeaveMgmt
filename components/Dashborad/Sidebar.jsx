@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -8,9 +7,10 @@ import {
   ChevronRight,
   GanttChartSquare,
   Home,
+  LogOut,
   MessageCircle,
-  Settings,
 } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -32,9 +32,11 @@ const Sidebar = () => {
       href: "/admin/reports",
     },
     {
-      name: "Settings",
-      icon: Settings,
-      href: "/admin/profile",
+      name: "Logout",
+      icon: LogOut,
+      onclick: () => {
+        signOut();
+      }
     },
   ];
 
@@ -55,10 +57,12 @@ const Sidebar = () => {
       href: "/user/reports",
     },
     {
-      name: "Settings",
-      icon: Settings,
-      href: "/user/profile",
-    },
+      name: "Logout",
+      icon: LogOut,
+      onclick: () => {
+        signOut();
+      }
+    }
   ];
   const routes = pathname.startsWith("/admin") ? admin : user;
 

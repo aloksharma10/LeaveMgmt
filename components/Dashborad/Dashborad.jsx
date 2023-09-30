@@ -26,9 +26,23 @@ import Link from "next/link";
 export default async function Dashboard() {
   const getSession = await getServerSession(authOptions);
 
+  const userId = getSession.user.id;
+
+  const [
+    userAvailableLeaveResult,
+    leavePolicyCycleResult,
+    tableData,
+    leaveData,
+  ] = await Promise.all([
+    getUserAvailableLeave(userId),
+    leavePolicyCycle(),
+    getUserTakenLeaveData(userId),
+    getLeaveData(userId, 5),
+  ]);
+
   const {
     data: { earnedLeave, casualLeave, vacationLeave },
-  } = await getUserAvailableLeave(getSession.user.id);
+  } = userAvailableLeaveResult;
 
   const {
     vacationCount,
@@ -37,11 +51,8 @@ export default async function Dashboard() {
     vacationMonths,
     earnedCycle,
     casualCycle,
-  } = await leavePolicyCycle();
+  } = leavePolicyCycleResult;
 
-  const tableData = await getUserTakenLeaveData(getSession.user.id);
-
-  const leaveData = await getLeaveData(getSession.user.id, 5);
   return (
     <div className="relative container mx-auto space-y-3 px-3">
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">

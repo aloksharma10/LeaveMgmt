@@ -10,7 +10,7 @@ import {
   deleteLeave,
   getUserLeaveReport,
 } from "@/actions/leaveActions";
-import { generateReportPDF, sendMail } from "@/actions/genrateReport";
+import { generateReportPDF } from "@/actions/genrateReport";
 
 function UserProvider({ children }) {
   const router = useRouter();
@@ -95,14 +95,9 @@ function UserProvider({ children }) {
           default:
             toast({
               className: "bg-black text-white",
-              title: "Success",
-              description:
-                "Your login request has been submitted for approval.",
+              title: "Login successfully!",
             });
-            // router.push(role.toLowerCase() == "admin" ? "/admin" : "/user");
-            redirect(
-              role.toLowerCase() == "admin" ? "/admin" : "/user","push");
-
+            redirect(role.toLowerCase() == "admin" ? "/admin" : "/user","push");
             break;
         }
       } else {
