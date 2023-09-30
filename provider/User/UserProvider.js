@@ -10,7 +10,7 @@ import {
   deleteLeave,
   getUserLeaveReport,
 } from "@/actions/leaveActions";
-import { sendMail } from "@/actions/genrateReport";
+import { generateReportPDF, sendMail } from "@/actions/genrateReport";
 
 function UserProvider({ children }) {
   const router = useRouter();
@@ -130,7 +130,13 @@ function UserProvider({ children }) {
     async (formData, date) => {
       const title = formData.get("title");
       const message = formData.get("message");
-      if (title.length > 2 && date.to > date.from) {
+      if (title.length < 5 || title.length > 30) {
+        return toast({
+          variant: "destructive",
+          title: "Ttile should not be less than 5 and more than 30 characters!",
+        });
+      }
+      if (5 < title.length < 30 && date.to > date.from) {
         const reqLeaveFormData = {
           title,
           startDate: date.from,
@@ -190,7 +196,6 @@ function UserProvider({ children }) {
           description: `Leave deleted successfully`,
         });
       } catch (error) {
-        console.log(error);
         toast({
           variant: "destructive",
           title: "Something went wrong",
@@ -202,15 +207,33 @@ function UserProvider({ children }) {
   );
 
   const handleSendReport = useCallback(
-    async (reportData) => {
+    async (reportData, date) => {
       try {
-       const sendReport = await sendMail()
+        if (reportData?.length == 0 || reportData == undefined) {
+          return toast({
+            variant: "destructive",
+            title: "Unsufficient data",
+            description: `No data found to send report`,
+          });
+        }
+        const approvedLeave = reportData.filter(
+          (leave) => leave.status == "approved"
+        );
+        if (approvedLeave.length == 0) {
+          return toast({
+            variant: "destructive",
+            title: "Unsufficient data",
+            description: `No approved leave found to send report`,
+          });
+        }
+        const sendReport = await generateReportPDF(approvedLeave,date, {name: user.name, email: user.email});
         toast({
           className: "bg-black text-white",
           title: "Success",
           description: `report has been sent on your email ${user.email}`,
         });
       } catch (error) {
+        console.log(error);
         toast({
           variant: "destructive",
           title: "Something went wrong",
@@ -218,7 +241,7 @@ function UserProvider({ children }) {
         });
       }
     },
-    [toast, user.email]
+    [toast, user.email, user.name]
   );
   return (
     <UserContext.Provider

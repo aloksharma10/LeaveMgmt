@@ -47,7 +47,7 @@ const LeaveReports = () => {
           Your Leave Report
           <div className="flex space-x-3">
             <DatePickerWithRange date={date} setDate={setDate} />
-            <form action={() => handleSendReport(tableData.data)}>
+            <form action={() => handleSendReport(tableData.data, date)}>
               <SendReportButton />
             </form>
           </div>

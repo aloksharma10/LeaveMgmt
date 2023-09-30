@@ -280,6 +280,7 @@ export async function getUserLeaveReport(
       earnedLeaveCount: String(leave.earnedLeaveCount),
       vacationLeaveCount: String(leave.vacationLeaveCount),
       salaryDeduction: String(leave.salaryDeduction),
+      rejectedMessage: String(leave.rejectedMessage),
     }));
     return {
       status: 200,

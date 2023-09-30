@@ -172,7 +172,7 @@ export default async function Dashboard() {
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
               Recent Updates
-              <Link href="/report">
+              <Link href="/user/reports">
                 <Button variant="secondary">View more</Button>
               </Link>
             </CardTitle>
