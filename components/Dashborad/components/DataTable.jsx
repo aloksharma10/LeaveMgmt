@@ -32,9 +32,9 @@ export default async function DataTable({ tableData }) {
             <TableCell
               className={cn(
                 "font-medium capitalize",
-                item.status === "pending" && "text-red-500",
+                item.status === "pending" && "text-yellow-500",
                 item.status === "approved" && "text-green-500",
-                item.status === "rejected" && "text-yellow-500"
+                item.status === "rejected" && "text-red-500"
               )}
             >
               {item.status}

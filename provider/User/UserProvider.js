@@ -21,12 +21,7 @@ function UserProvider({ children }) {
 
   const [user, setUser] = useState({});
 
-  const { data: session } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.push("/");
-    },
-  });
+  const { data: session } = useSession();
   useEffect(() => {
     if (session?.user) {
       setUser(session.user);
