@@ -10,7 +10,7 @@ import {
   getUserAvailableLeave,
   getUserTakenLeaveData,
   leavePolicyCycle,
-} from "@/actions/leaveActions";
+} from "@/actions/userLeaveActions";
 import { Activity, TimerReset } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -21,22 +21,29 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getAdminUserLeaveData } from "@/actions/adminLeaveActions";
+import { createLeavePolicy } from "@/actions/leaveActions";
 
 export default async function Dashboard() {
   const getSession = await getServerSession(authOptions);
   const userId = getSession.user.id;
 
-  const [userAvailableLeaveResult, leavePolicyCycleResult, tableData, leaveData] = await Promise.all([
+  const [
+    userAvailableLeaveResult,
+    leavePolicyCycleResult,
+    tableData,
+    leaveData,
+  ] = await Promise.all([
     getUserAvailableLeave(userId),
     leavePolicyCycle(),
     getUserTakenLeaveData(userId),
-    getLeaveData(userId, 5)
+    getLeaveData(userId, 5),
   ]);
-  
+
   const {
     data: { earnedLeave, casualLeave, vacationLeave },
   } = userAvailableLeaveResult;
-  
+
   const {
     vacationCount,
     earnedCount,
@@ -45,10 +52,14 @@ export default async function Dashboard() {
     earnedCycle,
     casualCycle,
   } = leavePolicyCycleResult;
-  
+
+  // const resData = await createLeavePolicy()
+  // console.log(resData)
+
   return (
     <div className="relative container mx-auto space-y-3 px-3">
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <Button variant="primary">Primary</Button>
+      {/* <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         <Suspense fallback={<span>Laoding...</span>}>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -80,7 +91,7 @@ export default async function Dashboard() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Earned Leaves
+                Employee exceeding 3 days
               </CardTitle>
               <TooltipProvider>
                 <Tooltip>
@@ -106,7 +117,7 @@ export default async function Dashboard() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Casual Leaves
+                Employee exceeding 5 days
               </CardTitle>
               <TooltipProvider>
                 <Tooltip>
@@ -132,7 +143,7 @@ export default async function Dashboard() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Vacation Leaves
+                Last month
               </CardTitle>
               <TooltipProvider>
                 <Tooltip>
@@ -164,7 +175,7 @@ export default async function Dashboard() {
       <div className="grid gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Leave Overview</CardTitle>
+            <CardTitle>Employee Overview</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <Suspense fallback={<span>Laoding...</span>}>
@@ -187,7 +198,7 @@ export default async function Dashboard() {
             </Suspense>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
     </div>
   );
 }
