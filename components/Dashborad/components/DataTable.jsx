@@ -13,6 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 export default async function DataTable({ tableData }) {
   return (
     <Table>
@@ -28,7 +29,14 @@ export default async function DataTable({ tableData }) {
       <TableBody>
         {tableData.map((item) => (
           <TableRow key={item.status} className="overflow-hidden">
-            <TableCell className="font-medium capitalize">
+            <TableCell
+              className={cn(
+                "font-medium capitalize",
+                item.status === "pending" && "text-red-500",
+                item.status === "approved" && "text-green-500",
+                item.status === "rejected" && "text-yellow-500"
+              )}
+            >
               {item.status}
             </TableCell>
             <TableCell className="w-2">
@@ -64,7 +72,7 @@ export default async function DataTable({ tableData }) {
                 <Tooltip>
                   <TooltipTrigger>
                     <p className="text-sm w-28 font-medium text-ellipsis whitespace-nowrap overflow-clip">
-                    {item.startDate}-{item.endDate}
+                      {item.startDate}-{item.endDate}
                     </p>
                   </TooltipTrigger>
                   <TooltipContent>

@@ -21,10 +21,15 @@ function Navbar({ navbg }) {
       )}
     >
       <div className="flex items-center justify-between px-4 md:container">
-        <MobileSidebar />
-        <div className="flex items-center cursor-pointer text-md font-bold md:pl-0 pl-10">
+        {user.name && <MobileSidebar />}
+        <div
+          className={cn(
+            "flex items-center cursor-pointer text-md font-bold md:pl-0",
+            user.name && "pl-10"
+          )}
+        >
           <Logo size={30} />
-          <span className="hidden md:block">Leave Management</span>
+          <span className={cn("hidden md:block", !user.name && "block")}>Leave Management</span>
         </div>
         <ul className="flex space-x-5 items-center cursor-pointer">
           {user.name ? (

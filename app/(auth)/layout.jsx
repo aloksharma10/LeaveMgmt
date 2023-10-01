@@ -9,7 +9,7 @@ export default function AuthLayout({ children }) {
   return (
     <>
       <Navbar />
-      <div className="container justify-between items-center flex my-5 min-h-screen">{children}</div>
+      <div className="container justify-between items-center lg:flex lg:my-5 lg:min-h-screen pt-28 lg:pt-0">{children}</div>
     </>
   );
 }

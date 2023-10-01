@@ -6,7 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 
 export default function Login() {
   return (
-    <div className="relative h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+    <div className="relative h-[800px] flex-col items-center justify-center max-w-lg mx-auto lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <Link
         href="/signup"
         className={cn(

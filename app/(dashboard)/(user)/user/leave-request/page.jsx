@@ -32,7 +32,7 @@ const LeaveRequest = async () => {
     await Promise.all([tableDataPromise, leavePolicyPromise]);
 
   return (
-    <div className="container lg:flex justify-center space-y-5 lg:space-y-0 lg:space-x-5">
+    <div className="container lg:flex justify-center space-y-5 lg:space-y-0 lg:space-x-5 mx-auto">
       <Suspense fallback={<>Loading...</>}>
         <Card className="max-w-xl xl:max-w-2xl">
           <CardHeader className="space-y-1">

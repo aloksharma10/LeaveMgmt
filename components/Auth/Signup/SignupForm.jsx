@@ -12,7 +12,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -27,7 +26,7 @@ const SignupForm = () => {
   }
   return (
     <Card>
-      <CardHeader className="space-y-1">
+      <CardHeader className="space-y-1 w-full">
         <CardTitle className="text-2xl text-center">Welcome!</CardTitle>
         <CardDescription className="text-center">
           BCIIT Leave Management App
