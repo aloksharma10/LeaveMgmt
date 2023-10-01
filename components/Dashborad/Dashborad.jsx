@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
 import LeaveOverView from "@/components/Dashborad/components/LeaveOverView";
-import CalendarComponent from "@/components/Dashborad/components/CalendarComponent";
 import DataTable from "@/components/Dashborad/components/DataTable";
 
 import { getServerSession } from "next-auth";
@@ -11,7 +10,7 @@ import {
   getUserAvailableLeave,
   getUserTakenLeaveData,
   leavePolicyCycle,
-} from "@/actions/leaveActions";
+} from "@/actions/userLeaveActions";
 import { Activity, TimerReset } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {

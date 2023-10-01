@@ -1,15 +1,18 @@
 "use client";
+
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
-import { useToast } from "@/components/ui/use-toast";
-import { userSignup } from "@/actions/userAction";
-import { signIn, signOut, useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
+
+import { useToast } from "@/components/ui/use-toast";
+import { signIn, signOut, useSession } from "next-auth/react";
+
 import {
   applyLeave,
   deleteLeave,
   getUserLeaveReport,
-} from "@/actions/leaveActions";
+} from "@/actions/userLeaveActions";
+import { userSignup } from "@/actions/userAction";
 import { generateReportPDF } from "@/actions/genrateReport";
 
 function UserProvider({ children }) {
@@ -97,7 +100,10 @@ function UserProvider({ children }) {
               className: "bg-black text-white",
               title: "Login successfully!",
             });
-            redirect(role.toLowerCase() == "admin" ? "/admin" : "/user","push");
+            redirect(
+              role.toLowerCase() == "admin" ? "/admin" : "/user",
+              "push"
+            );
             break;
         }
       } else {
@@ -159,7 +165,7 @@ function UserProvider({ children }) {
       } else {
         toast({
           variant: "destructive",
-          title: "Please enter the valid details!",
+          title: "Start date and end date must not be same!",
         });
       }
     },

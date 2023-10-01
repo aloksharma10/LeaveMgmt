@@ -301,7 +301,7 @@ export const leaveReportColumns = [
     ),
   },
   {
-    accessorKey: "rejectedReason",
+    accessorKey: "rejectedMessage",
     header: "Rejected Reason",
     cell: ({ row }) => {
       const rowData = row.original;
@@ -313,14 +313,14 @@ export const leaveReportColumns = [
           <Tooltip>
             <TooltipTrigger>
               <div className="capitalize w-28 text-ellipsis whitespace-nowrap overflow-clip ">
-                {row.getValue("rejectedReason")
-                  ? row.getValue("rejectedReason")
+                {row.getValue("rejectedMessage")
+                  ? row.getValue("rejectedMessage")
                   : "No Message..."}
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{row.getValue("rejectedReason")
-                  ? row.getValue("rejectedReason")
+              <p>{row.getValue("rejectedMessage")
+                  ? row.getValue("rejectedMessage")
                   : "No Message..."}</p>
             </TooltipContent>
           </Tooltip>

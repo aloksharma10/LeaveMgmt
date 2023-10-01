@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { getLeaveData, leavePolicyCycle } from "@/actions/leaveActions";
+import { getLeaveData, leavePolicyCycle } from "@/actions/userLeaveActions";
 
 import ApplyLeaveForm from "@/components/Dashborad/components/ApplyLeaveForm";
 import UserTable from "@/components/Dashborad/components/UserTable";
