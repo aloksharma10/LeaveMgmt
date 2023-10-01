@@ -125,8 +125,6 @@ function UserProvider({ children }) {
         title: "Success",
         description: "Logout successfully!",
       });
-
-      return router.push("/");
     } catch (error) {
       console.log("error", error);
       toast({
@@ -134,7 +132,7 @@ function UserProvider({ children }) {
         title: "Something went wrong!",
       });
     }
-  }, [router, toast]);
+  }, [toast]);
 
   const handleApplyLeave = useCallback(
     async (formData, date) => {

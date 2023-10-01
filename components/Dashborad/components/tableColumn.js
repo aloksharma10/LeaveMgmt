@@ -66,7 +66,7 @@ export const columns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="capitalize w-32 text-left text-ellipsis whitespace-nowrap overflow-clip ">
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip">
               {row.getValue("title")}
             </div>
           </TooltipTrigger>
@@ -84,7 +84,7 @@ export const columns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="text-ellipsis w-20 whitespace-nowrap overflow-clip text-left">
+            <div>
               {row.getValue("startDate")}
             </div>
           </TooltipTrigger>
@@ -102,12 +102,84 @@ export const columns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="text-ellipsis w-20 whitespace-nowrap overflow-clip text-left">
+            <div>
               {row.getValue("endDate")}
             </div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("endDate")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "casualLeaveCount",
+    header: "Casual",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>
+              {row.getValue("casualLeaveCount")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("casualLeaveCount")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "earnedLeaveCount",
+    header: "Earned",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>
+              {row.getValue("earnedLeaveCount")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("earnedLeaveCount")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "vacationLeaveCount",
+    header: "Vacation",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>
+              {row.getValue("vacationLeaveCount")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("vacationLeaveCount")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "salaryDeduction",
+    header: "Salary",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>
+              {row.getValue("salaryDeduction")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("salaryDeduction")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -181,7 +253,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="capitalize w-28 text-left text-ellipsis whitespace-nowrap overflow-clip ">
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip ">
               {row.getValue("title")}
             </div>
           </TooltipTrigger>
@@ -199,7 +271,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="text-ellipsis w-20 whitespace-nowrap overflow-clip text-left">
+            <div>
               {row.getValue("startDate")}
             </div>
           </TooltipTrigger>
@@ -217,7 +289,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="text-ellipsis w-20 whitespace-nowrap overflow-clip text-left">
+            <div>
               {row.getValue("endDate")}
             </div>
           </TooltipTrigger>
@@ -235,7 +307,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="capitalize w-24 text-ellipsis whitespace-nowrap overflow-clip ">
+            <div>
               {row.getValue("vacationLeaveCount")}
             </div>
           </TooltipTrigger>
@@ -253,7 +325,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="capitalize w-24 text-ellipsis whitespace-nowrap overflow-clip ">
+            <div>
               {row.getValue("casualLeaveCount")}
             </div>
           </TooltipTrigger>
@@ -271,7 +343,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="capitalize w-24 text-ellipsis whitespace-nowrap overflow-clip ">
+            <div>
               {row.getValue("earnedLeaveCount")}
             </div>
           </TooltipTrigger>
@@ -289,7 +361,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="capitalize w-24 text-ellipsis whitespace-nowrap overflow-clip ">
+            <div>
               {row.getValue("salaryDeduction")}
             </div>
           </TooltipTrigger>
@@ -306,22 +378,24 @@ export const leaveReportColumns = [
     cell: ({ row }) => {
       const rowData = row.original;
       if (rowData.status === "pending") {
-        return <Label>Waiting for the response...</Label>
+        return <Label>Waiting for the response...</Label>;
       }
       return (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <div className="capitalize w-28 text-ellipsis whitespace-nowrap overflow-clip ">
+              <div className="text-ellipsis w-20 whitespace-nowrap overflow-clip capitalize">
                 {row.getValue("rejectedMessage")
                   ? row.getValue("rejectedMessage")
                   : "No Message..."}
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{row.getValue("rejectedMessage")
+              <p>
+                {row.getValue("rejectedMessage")
                   ? row.getValue("rejectedMessage")
-                  : "No Message..."}</p>
+                  : "No Message..."}
+              </p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

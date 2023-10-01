@@ -33,6 +33,7 @@ export async function userSignup(formData) {
       leave: {
         totalTakenLeave: [],
         availableLeaves: {
+          allowedVacationPerMonth: vacation.perMonth,
           allowedEarnedPerMonth: earned.perMonth,
           allowedCasualPerMonth: casual.perMonth,
           earnedLeave: earned.allowedLeaveCount,

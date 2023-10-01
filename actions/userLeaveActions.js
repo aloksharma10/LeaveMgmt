@@ -58,18 +58,29 @@ export async function applyLeave(formData) {
 
     let currentMonth = new Date().getMonth();
 
-    if (reqLeaveDays > 0 && vacation.allowedMonths.includes(currentMonth)) {
+    if (
+      reqLeaveDays > 0 &&
+      vacation.allowedMonths.includes(currentMonth) &&
+      user.leave.availableLeaves.allowedVacationPerMonth > 0
+    ) {
       if (vacationLeave > 0) {
         vacationLeaveCount = Math.min(
           user.leave.availableLeaves.vacationLeave,
+          user.leave.availableLeaves.allowedVacationPerMonth,
           reqLeaveDays,
           vacation.allowedLeaveCount
         );
         reqLeaveDays -= vacationLeaveCount;
         user.leave.availableLeaves.vacationLeave -= vacationLeaveCount;
+        user.leave.availableLeaves.allowedVacationPerMonth -=
+          vacationLeaveCount;
       }
     }
-    if (reqLeaveDays > 0 && casualLeave > 0 && user.leave.availableLeaves.allowedCasualPerMonth > 0) {
+    if (
+      reqLeaveDays > 0 &&
+      casualLeave > 0 &&
+      user.leave.availableLeaves.allowedCasualPerMonth > 0
+    ) {
       casualLeaveCount = Math.min(
         user.leave.availableLeaves.casualLeave,
         user.leave.availableLeaves.allowedCasualPerMonth,
@@ -80,7 +91,11 @@ export async function applyLeave(formData) {
       user.leave.availableLeaves.casualLeave -= casualLeaveCount;
       user.leave.availableLeaves.allowedCasualPerMonth -= casualLeaveCount;
     }
-    if (reqLeaveDays > 0 && earnedLeave > 0 && user.leave.availableLeaves.allowedEarnedPerMonth > 0) {
+    if (
+      reqLeaveDays > 0 &&
+      earnedLeave > 0 &&
+      user.leave.availableLeaves.allowedEarnedPerMonth > 0
+    ) {
       earnedLeaveCount = Math.min(
         user.leave.availableLeaves.earnedLeave,
         user.leave.availableLeaves.allowedEarnedPerMonth,
@@ -311,8 +326,10 @@ export async function deleteLeave(leaveId, userId) {
       user.leave.availableLeaves.earnedLeave += deleteLeave.earnedLeaveCount;
       user.leave.availableLeaves.vacationLeave +=
         deleteLeave.vacationLeaveCount;
-      user.leave.availableLeaves.allowedCasualPerMonth += deleteLeave.casualLeaveCount;
-      user.leave.availableLeaves.allowedEarnedPerMonth += deleteLeave.earnedLeaveCount;
+      user.leave.availableLeaves.allowedCasualPerMonth +=
+        deleteLeave.casualLeaveCount;
+      user.leave.availableLeaves.allowedEarnedPerMonth +=
+        deleteLeave.earnedLeaveCount;
     }
 
     const leaveIndex = user.leave.totalTakenLeave.indexOf(leaveId);

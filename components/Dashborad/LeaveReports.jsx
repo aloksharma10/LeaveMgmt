@@ -43,9 +43,9 @@ const LeaveReports = () => {
   return (
     <Card className="col-span-4">
       <CardHeader>
-        <CardTitle className="flex justify-between">
-          Your Leave Report
-          <div className="flex space-x-3">
+        <CardTitle className="md:flex justify-between space-y-3">
+        Your Leave Report
+          <div className="md:flex space-y-3 md:space-y-0 md:space-x-3 mt-6 md:mt-0">
             <DatePickerWithRange date={date} setDate={setDate} />
             <form action={() => handleSendReport(tableData.data, date)}>
               <SendReportButton />
