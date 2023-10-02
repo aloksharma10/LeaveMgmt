@@ -3,6 +3,7 @@
 import LeavePolicy from "@/lib/models/LeavePolicySchema";
 import UserSchema from "@/lib/models/UserSchema";
 import bcrypt from "bcrypt";
+import { revalidatePath } from "next/cache";
 const { default: dbConn } = require("@/lib/db/dbConn");
 
 let conn = false;
@@ -42,6 +43,7 @@ export async function userSignup(formData) {
         },
       },
     });
+    revalidatePath("/admin/user-management")
     return {
       status: 200,
       message: "User signup Successfully",

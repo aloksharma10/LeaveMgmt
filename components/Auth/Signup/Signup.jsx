@@ -4,6 +4,13 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import AuthSideContainer from "../AuthSideContainer";
 import SignupForm from "./SignupForm";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 function Signup() {
   return (
@@ -25,7 +32,17 @@ function Signup() {
       />
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 lg:max-w-lg shadow-xl rounded-md bg-white">
-          <SignupForm />
+          <Card>
+            <CardHeader className="space-y-1 w-full">
+              <CardTitle className="text-2xl text-center">Welcome!</CardTitle>
+              <CardDescription className="text-center">
+                BCIIT Leave Management App
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SignupForm />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

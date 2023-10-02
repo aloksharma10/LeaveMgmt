@@ -70,7 +70,7 @@ export default function UserTable({ data, limitNo = 5, columns }) {
   return (
     <div className="w-full bg-gray-50 px-2 rounded-lg">
       <div className="flex items-center py-4">
-        <Input
+        {/* <Input
           name="search"
           placeholder="Filter status..."
           value={table.getColumn("status")?.getFilterValue() ?? ""}
@@ -78,7 +78,7 @@ export default function UserTable({ data, limitNo = 5, columns }) {
             table.getColumn("status")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
-        />
+        /> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

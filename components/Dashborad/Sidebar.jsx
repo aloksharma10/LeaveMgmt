@@ -9,6 +9,7 @@ import {
   Home,
   LogOut,
   MessageCircle,
+  Users2,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -22,12 +23,17 @@ const Sidebar = () => {
       href: "/admin",
     },
     {
-      name: "User Leave Request",
-      icon: GanttChartSquare,
-      href: "/admin/leave-request",
+      name: "User",
+      icon: Users2,
+      href: "/admin/user-management",
     },
     {
-      name: "Leave Report",
+      name: "Leave",
+      icon: GanttChartSquare,
+      href: "/admin/leaves",
+    },
+    {
+      name: "Report",
       icon: BarChart3,
       href: "/admin/reports",
     },

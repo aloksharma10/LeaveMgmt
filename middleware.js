@@ -2,7 +2,7 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 const isAdminRoute = (pathname) => pathname.includes("/admin");
-const isUserRoute = (pathname) => pathname.includes("/user");
+const isUserRoute = (pathname) => pathname.startsWith("/user");
 
 const checkUserRole = (token, roles) => roles.includes(token?.role);
 

@@ -1,17 +1,31 @@
 "use client";
-import { ArrowUpDown, CircleOff } from "lucide-react";
+import { ArrowUpDown, CircleOff, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+
 import LeaveModel from "./LeaveModel";
-import { Label } from "@/components/ui/label";
+import {
+  ApprovedDialog,
+  DisapprovedDialog,
+  DeleteUserDialog,
+} from "./UserActionDialog";
 
 export const columns = [
   {
@@ -84,9 +98,7 @@ export const columns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("startDate")}
-            </div>
+            <div>{row.getValue("startDate")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("startDate")}</p>
@@ -102,9 +114,7 @@ export const columns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("endDate")}
-            </div>
+            <div>{row.getValue("endDate")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("endDate")}</p>
@@ -120,9 +130,7 @@ export const columns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("casualLeaveCount")}
-            </div>
+            <div>{row.getValue("casualLeaveCount")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("casualLeaveCount")}</p>
@@ -138,9 +146,7 @@ export const columns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("earnedLeaveCount")}
-            </div>
+            <div>{row.getValue("earnedLeaveCount")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("earnedLeaveCount")}</p>
@@ -156,9 +162,7 @@ export const columns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("vacationLeaveCount")}
-            </div>
+            <div>{row.getValue("vacationLeaveCount")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("vacationLeaveCount")}</p>
@@ -174,9 +178,7 @@ export const columns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("salaryDeduction")}
-            </div>
+            <div>{row.getValue("salaryDeduction")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("salaryDeduction")}</p>
@@ -271,9 +273,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("startDate")}
-            </div>
+            <div>{row.getValue("startDate")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("startDate")}</p>
@@ -289,9 +289,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("endDate")}
-            </div>
+            <div>{row.getValue("endDate")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("endDate")}</p>
@@ -307,9 +305,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("vacationLeaveCount")}
-            </div>
+            <div>{row.getValue("vacationLeaveCount")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("vacationLeaveCount")}</p>
@@ -325,9 +321,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("casualLeaveCount")}
-            </div>
+            <div>{row.getValue("casualLeaveCount")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("casualLeaveCount")}</p>
@@ -343,9 +337,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("earnedLeaveCount")}
-            </div>
+            <div>{row.getValue("earnedLeaveCount")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("earnedLeaveCount")}</p>
@@ -361,9 +353,7 @@ export const leaveReportColumns = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div>
-              {row.getValue("salaryDeduction")}
-            </div>
+            <div>{row.getValue("salaryDeduction")}</div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{row.getValue("salaryDeduction")}</p>
@@ -399,6 +389,303 @@ export const leaveReportColumns = [
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+      );
+    },
+  },
+];
+
+export const UserApprovalColumns = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "approved",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div
+        className={cn(
+          "capitalize text-center",
+          row.getValue("approved") === true && "text-green-500",
+          row.getValue("approved") === false && "text-red-500"
+        )}
+      >
+        {String(row.getValue("approved"))}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("role")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("role")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("name")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("name")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("email")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("email")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const rowData = row.original;
+      return (
+        <span className="flex">
+          <ApprovedDialog user={rowData} />
+          <DeleteUserDialog user={rowData} />
+        </span>
+      );
+    },
+  },
+];
+
+export const AllUsers = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "approved",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div
+        className={cn(
+          "capitalize text-center",
+          row.getValue("approved") === true && "text-green-500",
+          row.getValue("approved") === false && "text-red-500"
+        )}
+      >
+        {String(row.getValue("approved"))}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("role")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("role")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("name")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("name")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("email")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("email")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "totalTakenLeave",
+    header: "Total Leave",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("totalTakenLeave")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("totalTakenLeave")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "casualLeave",
+    header: "Casual",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>{row.getValue("casualLeave")}</div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("casualLeave")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "earnedLeave",
+    header: "Earned",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>{row.getValue("earnedLeave")}</div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("earnedLeave")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "vacationLeave",
+    header: "Vacation",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>{row.getValue("vacationLeave")}</div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("vacationLeave")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const rowData = row.original;
+      const Component = rowData.approved ? DisapprovedDialog : ApprovedDialog;
+      return (
+        <span className="flex">
+          <Component user={rowData} />
+          <DeleteUserDialog user={rowData} />
+        </span>
       );
     },
   },

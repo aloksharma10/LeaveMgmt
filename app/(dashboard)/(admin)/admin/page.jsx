@@ -1,89 +1,46 @@
 import React, { Suspense } from "react";
-import LeaveOverView from "@/components/Dashborad/components/LeaveOverView";
-import DataTable from "@/components/Dashborad/components/DataTable";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-
-import {
-  getLeaveData,
-  getUserAvailableLeave,
-  getUserTakenLeaveData,
-  leavePolicyCycle,
-} from "@/actions/userLeaveActions";
-import { Activity, TimerReset } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getAdminUserLeaveData } from "@/actions/adminLeaveActions";
-import { createLeavePolicy } from "@/actions/leaveActions";
+
+import LineChartComponent from "@/components/Dashborad/components/LineChartComponent";
+import RecentUpdatesTable from "@/components/Dashborad/components/RecentUpdatesTable";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  getAdminUserLeaveData,
+  getRecentUpdates,
+  getUsersByLeaveCriteria,
+} from "@/actions/adminLeaveActions";
 
 export default async function Dashboard() {
-  const getSession = await getServerSession(authOptions);
-  const userId = getSession.user.id;
-
-  const [
-    userAvailableLeaveResult,
-    leavePolicyCycleResult,
-    tableData,
-    leaveData,
-  ] = await Promise.all([
-    getUserAvailableLeave(userId),
-    leavePolicyCycle(),
-    getUserTakenLeaveData(userId),
-    getLeaveData(userId, 5),
-  ]);
+  const [getUserLeaveCriteria, userOverviewData, userRecentLeaveData] =
+    await Promise.all([
+      getUsersByLeaveCriteria(),
+      getAdminUserLeaveData(),
+      getRecentUpdates(),
+    ]);
 
   const {
-    data: { earnedLeave, casualLeave, vacationLeave },
-  } = userAvailableLeaveResult;
-
-  const {
-    vacationCount,
-    earnedCount,
-    casualCount,
-    vacationMonths,
-    earnedCycle,
-    casualCycle,
-  } = leavePolicyCycleResult;
-
-  // const resData = await createLeavePolicy()
-  // console.log(resData)
-
+    usersOnLeaveLastMonth,
+    usersMoreThan3DaysLeave,
+    usersMoreThan5DaysLeave,
+    usersCurrentlyOnLeave,
+  } = getUserLeaveCriteria;
+ 
   return (
     <div className="relative container mx-auto space-y-3 px-3">
-      <Button variant="primary">Primary</Button>
-      {/* <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         <Suspense fallback={<span>Laoding...</span>}>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Employee on leave
               </CardTitle>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Activity className="w-4" />
-                  </TooltipTrigger>
-                  <TooltipContent className="w-44">
-                    <p>Total leave: Earned + Causal + Vacation</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
             </CardHeader>
             <CardContent>
               <div className="justify-center items-baseline">
                 <span className="text-3xl font-bold">
-                  {earnedLeave + vacationLeave + casualLeave}
-                </span>
-                <span className="text-gray-500 text-sm">
-                  /{earnedCount + vacationCount + casualCount}
+                  {usersCurrentlyOnLeave.length}
                 </span>
               </div>
             </CardContent>
@@ -93,24 +50,12 @@ export default async function Dashboard() {
               <CardTitle className="text-sm font-medium">
                 Employee exceeding 3 days
               </CardTitle>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <TimerReset className="w-4" />
-                  </TooltipTrigger>
-                  <TooltipContent className="items-baseline w-44">
-                    <p className="text-sm font-medium">
-                      Leave resets at every {earnedCycle}
-                      <span className="text-gray-500 text-xs">/months</span>
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
             </CardHeader>
             <CardContent className="flex">
               <div className="justify-center items-baseline">
-                <span className="text-3xl font-bold">{earnedLeave}</span>
-                <span className="text-gray-500 text-sm">/{earnedCount}</span>
+                <span className="text-3xl font-bold">
+                  {usersMoreThan3DaysLeave.length}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -119,86 +64,56 @@ export default async function Dashboard() {
               <CardTitle className="text-sm font-medium">
                 Employee exceeding 5 days
               </CardTitle>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <TimerReset className="w-4" />
-                  </TooltipTrigger>
-                  <TooltipContent className="items-baseline w-44">
-                    <p className="text-sm font-medium">
-                      Leave resets at every {casualCycle}
-                      <span className="text-gray-500 text-xs">/months</span>
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
             </CardHeader>
             <CardContent>
               <div className="justify-center items-baseline">
-                <span className="text-3xl font-bold">{casualLeave}</span>
-                <span className="text-gray-500 text-sm">/{casualCount}</span>
+                <span className="text-3xl font-bold">
+                  {usersMoreThan5DaysLeave.length}
+                </span>
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Last month
-              </CardTitle>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <TimerReset className="w-4" />
-                  </TooltipTrigger>
-                  <TooltipContent className="items-baseline w-44">
-                    <p className="text-sm">
-                      Leave allowed for{" "}
-                      {vacationMonths.map((month) => (
-                        <span className="font-medium" key={month}>
-                          {month},{" "}
-                        </span>
-                      ))}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <CardTitle className="text-sm font-medium">Last month</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="justify-center items-baseline">
-                <span className="text-3xl font-bold">{vacationLeave}</span>
-                <span className="text-gray-500 text-sm">/{vacationCount}</span>
+                <span className="text-3xl font-bold">
+                  {usersOnLeaveLastMonth.length}
+                </span>
               </div>
             </CardContent>
           </Card>
         </Suspense>
       </div>
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-2 lg:grid-cols-10">
+        <Card className="col-span-5 max-w-3xl">
           <CardHeader>
             <CardTitle>Employee Overview</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <Suspense fallback={<span>Laoding...</span>}>
-              <LeaveOverView leaveData={tableData} />
+              <LineChartComponent userOverview={userOverviewData.data?userOverviewData.data:[]} />
             </Suspense>
           </CardContent>
         </Card>
-        <Card className="col-span-3">
+        <Card className="col-span-5 max-w-2xl">
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
               Recent Updates
-              <Link href="/user/reports">
+              <Link href="/admin/reports">
                 <Button variant="secondary">View more</Button>
               </Link>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Suspense fallback={<span>Laoding...</span>}>
-              <DataTable tableData={leaveData.data} />
+              <RecentUpdatesTable tableData={userRecentLeaveData.data?userRecentLeaveData.data:[]} />
             </Suspense>
           </CardContent>
         </Card>
-      </div> */}
+      </div>
     </div>
   );
 }

@@ -24,39 +24,46 @@ export async function getUsersByLeaveCriteria() {
   lastMonth.setMonth(lastMonth.getMonth() - 1);
 
   try {
-    const usersOnLeaveLastMonthPromise = User.find({
-      "leave.totalTakenLeave": {
-        $elemMatch: {
-          startDate: {
-            $gte: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1),
-          },
-          endDate: { $lte: new Date(today.getFullYear(), today.getMonth(), 0) },
-        },
+    if (!conn) await connect();
+
+    const usersOnLeaveLastMonth = await Leave.find({
+      status: "approved",
+      startDate: {
+        $gte: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1),
       },
-    });
+      endDate: { $lte: new Date(today.getFullYear(), today.getMonth(), 0) },
+    }).populate("user");
 
-    const usersMoreThan3DaysLeavePromise = User.find({
-      "leave.totalTakenLeave": { $gt: 3 },
-    });
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(today.getDate() - 3);
+    const usersMoreThan3DaysLeave = await Leave.find({
+      status: "approved",
+      startDate: { $gte: threeDaysAgo },
+      endDate: { $lte: today },
+    }).populate("user");
 
-    const usersMoreThan5DaysLeavePromise = User.find({
-      "leave.totalTakenLeave": { $gt: 5 },
-    });
+    const fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(today.getDate() - 5);
+    const usersMoreThan5DaysLeave = await Leave.find({
+      status: "approved",
+      startDate: { $gte: fiveDaysAgo },
+      endDate: { $lte: today },
+      user: {
+        $nin: usersMoreThan3DaysLeave.map((userLeave) => userLeave.user),
+      },
+    }).populate("user");
 
-    const [
-      usersOnLeaveLastMonth,
-      usersMoreThan3DaysLeave,
-      usersMoreThan5DaysLeave,
-    ] = await Promise.all([
-      usersOnLeaveLastMonthPromise,
-      usersMoreThan3DaysLeavePromise,
-      usersMoreThan5DaysLeavePromise,
-    ]);
+    const usersCurrentlyOnLeave = await Leave.find({
+      status: "approved",
+      startDate: { $lte: today },
+      endDate: { $gte: today },
+    }).populate("user");
 
     return {
       usersOnLeaveLastMonth,
       usersMoreThan3DaysLeave,
       usersMoreThan5DaysLeave,
+      usersCurrentlyOnLeave,
     };
   } catch (error) {
     console.error("Error retrieving users by leave criteria:", error);
@@ -73,7 +80,9 @@ export async function getAdminUserLeaveData() {
       throw new Error("No users found");
     }
 
-    const monthLeavesCount = new Array(12).fill(0);
+    const monthLeavesData = new Array(12)
+      .fill(0)
+      .map(() => ({ leave: 0, role: "" }));
 
     for (const user of users) {
       const leaveData = user.leave.totalTakenLeave
@@ -87,7 +96,6 @@ export async function getAdminUserLeaveData() {
         const startDate = leave.startDate;
         const endDate = leave.endDate;
 
-        // Calculate leaves for each month
         let currentMonth = startDate.getMonth();
         let currentYear = startDate.getFullYear();
 
@@ -97,11 +105,11 @@ export async function getAdminUserLeaveData() {
             month === currentMonth &&
             startDate.getFullYear() === currentYear
           ) {
-            monthLeavesCount[month]++;
+            monthLeavesData[month].leave++;
+            monthLeavesData[month].role = user.role;
           }
           startDate.setMonth(startDate.getMonth() + 1);
 
-          // Update current month and year
           if (startDate.getMonth() !== currentMonth) {
             currentMonth = startDate.getMonth();
             currentYear = startDate.getFullYear();
@@ -110,21 +118,215 @@ export async function getAdminUserLeaveData() {
       }
     }
 
-    // Convert the leave per month data to the desired format
-    const formattedData = monthLeavesCount.map((totalLeave, index) => ({
-      month: getMonthName(index),
-      leaveCount: totalLeave,
+    const formattedData = monthLeavesData.map((monthData, index) => ({
+      name: getMonthName(index),
+      leave: monthData.leave,
+      role: monthData.role,
     }));
-    console.log(formattedData);
-
     return {
-        status: 200,
-        data: formattedData,
+      status: 200,
+      data: formattedData,
     };
   } catch (error) {
     return {
-        status: 500,
-        message: error.message,
+      status: 500,
+      message: error.message,
+    };
+  }
+}
+
+export async function getRecentUpdates(dataLimit = 5) {
+  try {
+    if (!conn) await connect();
+    const leaveData = await Leave.find()
+      .populate({ path: "user" })
+      .sort({ createdAt: -1 })
+      .limit(dataLimit);
+    if (!leaveData) {
+      throw new Error("User not found");
+    }
+    const leaveDataList = leaveData.map((leave) => ({
+      id: String(leave._id),
+      userName: String(leave.user.name),
+      role: String(leave.user.role),
+      title: String(leave.title),
+      startDate: String(new Date(leave.startDate).toLocaleDateString()),
+      endDate: String(new Date(leave.endDate).toLocaleDateString()),
+      message: String(leave.message),
+      status: String(leave.status),
+      casualLeaveCount: String(leave.casualLeaveCount),
+      earnedLeaveCount: String(leave.earnedLeaveCount),
+      vacationLeaveCount: String(leave.vacationLeaveCount),
+      salaryDeduction: String(leave.salaryDeduction),
+    }));
+    return {
+      status: 200,
+      data: leaveDataList,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 400,
+      message: "Something went wrong!",
+    };
+  }
+}
+
+export async function getUserForApproval() {
+  try {
+    if (!conn) await connect();
+    const users = await UserSchema.find({ approved: false }).sort({
+      createdAt: -1,
+    });
+    const allUsers = await UserSchema.find().sort({ createdAt: -1 });
+
+    const allUserList = allUsers.map((user) => ({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      totalTakenLeave: user.leave.totalTakenLeave.length,
+      approved: user.approved,
+      casualLeave: user.leave.availableLeaves.casualLeave,
+      earnedLeave: user.leave.availableLeaves.earnedLeave,
+      vacationLeave: user.leave.availableLeaves.vacationLeave,
+    }));
+
+    if (!users) throw new Error("No users found");
+    return {
+      status: 200,
+      approvalUser: JSON.stringify(users),
+      allUsers: JSON.stringify(allUserList),
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      message: error.message,
+    };
+  }
+}
+
+export async function approveUser(userId) {
+  try {
+    if (!conn) await connect();
+    const user = await UserSchema.findByIdAndUpdate(userId, {
+      approved: true,
+    });
+    if (!user) throw new Error("User not found");
+    revalidatePath("/admin/user-management");
+    return {
+      status: 200,
+      message: "User approved successfully",
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      message: "Internal Server Error",
+    };
+  }
+}
+
+export async function disapproveUser(userId) {
+  try {
+    if (!conn) await connect();
+    const user = await UserSchema.findByIdAndUpdate(userId, {
+      approved: false,
+    });
+    if (!user) throw new Error("User not found");
+    revalidatePath("/admin/user-management");
+    return {
+      status: 200,
+      message: "User disapproved successfully",
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      message: "Internal Server Error",
+    };
+  }
+}
+
+export async function deleteUser(userId) {
+  try {
+    if (!conn) await connect();
+    const user = await UserSchema.findByIdAndDelete(userId);
+    if (!user) throw new Error("User not found");
+    revalidatePath("/admin/user-management");
+    return {
+      status: 200,
+      message: "User deleted successfully",
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      message: "Internal Server Error",
+    };
+  }
+}
+
+export async function getLeavePolicy() {
+  try {
+    if (!conn) await connect();
+    const leavePolicy = await LeavePolicy.findOne();
+    if (!leavePolicy) throw new Error("Leave Policy not found");
+    return {
+      status: 200,
+      data: leavePolicy,
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      message: "Internal Server Error",
+    };
+  }
+}
+
+export async function updateLeavePolicy(leavePolicyData) {
+  try {
+    if (!conn) await connect();
+    const leavePolicy = await LeavePolicy.findOne();
+    if (!leavePolicy) throw new Error("Leave Policy not found");
+    leavePolicy.vacation.allowedLeaveCount =
+      leavePolicyData.vacation.allowedLeaveCount;
+    leavePolicy.vacation.allowedMonths = leavePolicyData.vacation.allowedMonths;
+    leavePolicy.casual.perMonth = leavePolicyData.casual.perMonth;
+    leavePolicy.casual.allowedLeaveCount =
+      leavePolicyData.casual.allowedLeaveCount;
+    leavePolicy.casual.leaveCycleMonths =
+      leavePolicyData.casual.leaveCycleMonths;
+    leavePolicy.earned.perMonth = leavePolicyData.earned.perMonth;
+    leavePolicy.earned.allowedLeaveCount =
+      leavePolicyData.earned.allowedLeaveCount;
+    leavePolicy.earned.leaveCycleMonths =
+      leavePolicyData.earned.leaveCycleMonths;
+    leavePolicy.salaryDeductionRate = leavePolicyData.salaryDeductionRate;
+    await leavePolicy.save();
+    return {
+      status: 200,
+      message: "Leave policy updated successfully",
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      message: "Internal Server Error",
+    };
+  }
+}
+
+export async function getUserForLeaveApproval(){
+  try {
+    if (!conn) await connect();
+    const usersForLeaveApproval = await Leave.find({status: "pending"}).populate("user");    
+    if (!usersForLeaveApproval) throw new Error("No users found");
+    return {
+      status: 200,
+      data: usersForLeaveApproval,
+    };
+   
+  } catch (error) {
+    return {
+      status: 500,
+      message: error.message,
     };
   }
 }

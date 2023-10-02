@@ -14,6 +14,7 @@ import {
 } from "@/actions/userLeaveActions";
 import { userSignup } from "@/actions/userAction";
 import { generateReportPDF } from "@/actions/genrateReport";
+import { approveUser, deleteUser, disapproveUser } from "@/actions/adminLeaveActions";
 
 function UserProvider({ children }) {
   const router = useRouter();
@@ -248,6 +249,64 @@ function UserProvider({ children }) {
     },
     [toast, user.email, user.name]
   );
+  
+  const handleUserApproval = useCallback(
+    async (userId) => {
+      try {
+        const res = await approveUser(userId);
+        toast({
+          className: "bg-black text-white",
+          title: "Success",
+          description: `User approved successfully`,
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: `Failed to approve user`,
+        });
+      }
+    },
+    [toast]
+  );
+  const handleUserDelete = useCallback(
+    async (userId) => {
+      try {
+        const res = await deleteUser(userId);
+        toast({
+          className: "bg-black text-white",
+          title: "Success",
+          description: `User deleted successfully`,
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: `Failed to delete user`,
+        });
+      }
+    },
+    [toast]
+  );
+  const handleUserDisapprove = useCallback(
+    async (userId) => {
+      try {
+        const res = await disapproveUser(userId);
+        toast({
+          className: "bg-black text-white",
+          title: "Success",
+          description: `User disapproved successfully`,
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: `Failed to disapprove user`,
+        });
+      }
+    },
+    [toast]
+  );
   return (
     <UserContext.Provider
       value={{
@@ -259,6 +318,11 @@ function UserProvider({ children }) {
         handleUserMonthlyReport,
         handleLeaveDelete,
         handleSendReport,
+
+        // Admin 
+        handleUserApproval,
+        handleUserDelete,
+        handleUserDisapprove
       }}
     >
       {children}

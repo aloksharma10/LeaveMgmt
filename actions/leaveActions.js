@@ -18,6 +18,7 @@ export async function createLeavePolicy() {
     if (!conn) await connect();
     const newLeavePolicy = await LeavePolicy.create({
       vacation: {
+        perMonth: 21,
         allowedLeaveCount: 21,
         allowedMonths: [4, 5, 6],
       },
