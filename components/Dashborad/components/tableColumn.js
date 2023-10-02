@@ -1,5 +1,10 @@
 "use client";
-import { ArrowUpDown, CircleOff, MoreHorizontal } from "lucide-react";
+import {
+  ArrowUpDown,
+  CircleOff,
+  MoreHorizontal,
+  ShieldCheck,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,14 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+
 import { cn } from "@/lib/utils";
 
 import LeaveModel from "./LeaveModel";
@@ -26,6 +24,7 @@ import {
   DisapprovedDialog,
   DeleteUserDialog,
 } from "./UserActionDialog";
+import { RejectLeaveApproval } from "./LeaveActionDialog";
 
 export const columns = [
   {
@@ -687,6 +686,160 @@ export const AllUsers = [
           <DeleteUserDialog user={rowData} />
         </span>
       );
+    },
+  },
+];
+
+export const UserleaveApprovalColumns = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className={cn("capitalize w-5 text-left pl-4 text-yellow-500")}>
+        {row.getValue("status")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-12 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("role")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("role")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-12 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("name")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("name")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "title",
+    header: "Title",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-12 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("title")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("title")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "message",
+    header: "Message",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="capitalize w-20 text-ellipsis whitespace-nowrap overflow-clip ">
+              {row.getValue("message")}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="w-52">
+            <p>{row.getValue("message")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "startDate",
+    header: "Start Date",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>{row.getValue("startDate")}</div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("startDate")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    accessorKey: "endDate",
+    header: "End Date",
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div>{row.getValue("endDate")}</div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{row.getValue("endDate")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const rowData = row.original;
+      return <RejectLeaveApproval leave={rowData} />;
     },
   },
 ];

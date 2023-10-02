@@ -13,8 +13,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export default function DatePickerWithRange({ className, date, setDate }) {
-
+export default function DatePickerWithRange({
+  className,
+  date,
+  setDate,
+  disabledDates,
+}) {
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -45,7 +49,7 @@ export default function DatePickerWithRange({ className, date, setDate }) {
         <PopoverContent className="w-auto p-0" align="end">
           <Calendar
             initialFocus
-            disabled={{ after: new Date() }}
+            disabled={disabledDates}
             mode="range"
             defaultMonth={date?.from}
             selected={date}

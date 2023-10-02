@@ -271,7 +271,7 @@ export async function getLeavePolicy() {
     if (!leavePolicy) throw new Error("Leave Policy not found");
     return {
       status: 200,
-      data: leavePolicy,
+      data: JSON.stringify(leavePolicy),
     };
   } catch (error) {
     return {
@@ -286,26 +286,29 @@ export async function updateLeavePolicy(leavePolicyData) {
     if (!conn) await connect();
     const leavePolicy = await LeavePolicy.findOne();
     if (!leavePolicy) throw new Error("Leave Policy not found");
+    leavePolicy.vacation.perMonth = leavePolicyData.vacation_per_month;
     leavePolicy.vacation.allowedLeaveCount =
-      leavePolicyData.vacation.allowedLeaveCount;
-    leavePolicy.vacation.allowedMonths = leavePolicyData.vacation.allowedMonths;
-    leavePolicy.casual.perMonth = leavePolicyData.casual.perMonth;
+      leavePolicyData.vacation_allowedLeaveCount;
+    leavePolicy.vacation.allowedMonths = leavePolicyData.vacation_allowedMonths;
+    leavePolicy.casual.perMonth = leavePolicyData.casual_per_month;
     leavePolicy.casual.allowedLeaveCount =
-      leavePolicyData.casual.allowedLeaveCount;
+      leavePolicyData.casual_allowedLeaveCount;
     leavePolicy.casual.leaveCycleMonths =
-      leavePolicyData.casual.leaveCycleMonths;
-    leavePolicy.earned.perMonth = leavePolicyData.earned.perMonth;
+      leavePolicyData.casual_leaveCycleMonths;
+    leavePolicy.earned.perMonth = leavePolicyData.earned_per_month;
     leavePolicy.earned.allowedLeaveCount =
-      leavePolicyData.earned.allowedLeaveCount;
+      leavePolicyData.earned_allowedLeaveCount;
     leavePolicy.earned.leaveCycleMonths =
-      leavePolicyData.earned.leaveCycleMonths;
+      leavePolicyData.earned_leaveCycleMonths;
     leavePolicy.salaryDeductionRate = leavePolicyData.salaryDeductionRate;
     await leavePolicy.save();
+    revalidatePath("/admin/leaves");
     return {
       status: 200,
       message: "Leave policy updated successfully",
     };
   } catch (error) {
+    console.log(error);
     return {
       status: 500,
       message: "Internal Server Error",
@@ -313,20 +316,57 @@ export async function updateLeavePolicy(leavePolicyData) {
   }
 }
 
-export async function getUserForLeaveApproval(){
+export async function getUserForLeaveApproval() {
   try {
     if (!conn) await connect();
-    const usersForLeaveApproval = await Leave.find({status: "pending"}).populate("user");    
-    if (!usersForLeaveApproval) throw new Error("No users found");
+    const pendingLeaveData = await Leave.find({
+      status: "pending",
+    }).populate("user");
+    if (!pendingLeaveData) throw new Error("No users found");
+
+    const usersForLeaveApproval = pendingLeaveData.map((leave) => ({
+      id: leave._id,
+      name: leave.user.name,
+      role: leave.user.role,
+      title: leave.title,
+      startDate: new Date(leave.startDate).toLocaleDateString(),
+      endDate: new Date(leave.endDate).toLocaleDateString(),
+      message: leave.message,
+      status: leave.status,
+      casualLeaveCount: leave.casualLeaveCount,
+      earnedLeaveCount: leave.earnedLeaveCount,
+      vacationLeaveCount: leave.vacationLeaveCount,
+      salaryDeduction: leave.salaryDeduction,
+    }));
+
     return {
       status: 200,
-      data: usersForLeaveApproval,
+      data: JSON.stringify(usersForLeaveApproval),
     };
-   
   } catch (error) {
     return {
       status: 500,
       message: error.message,
+    };
+  }
+}
+
+export async function approveLeave(leaveId, status, message) {
+  try {
+    const leave = await Leave.findByIdAndUpdate(leaveId, {
+      status: status,
+      message: message,
+    });
+    if (!leave) throw new Error("Leave not found");
+    revalidatePath("/admin/leaves");
+    return {
+      status: 200,
+      message: "Leave approved successfully",
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      message: "Internal Server Error",
     };
   }
 }

@@ -2,7 +2,7 @@
 
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { useToast } from "@/components/ui/use-toast";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -14,10 +14,16 @@ import {
 } from "@/actions/userLeaveActions";
 import { userSignup } from "@/actions/userAction";
 import { generateReportPDF } from "@/actions/genrateReport";
-import { approveUser, deleteUser, disapproveUser } from "@/actions/adminLeaveActions";
+import {
+  approveLeave,
+  approveUser,
+  deleteUser,
+  disapproveUser,
+  updateLeavePolicy,
+} from "@/actions/adminLeaveActions";
+import { differenceInMonths } from "date-fns";
 
 function UserProvider({ children }) {
-  const router = useRouter();
   const { toast } = useToast();
 
   const [user, setUser] = useState({});
@@ -249,7 +255,7 @@ function UserProvider({ children }) {
     },
     [toast, user.email, user.name]
   );
-  
+
   const handleUserApproval = useCallback(
     async (userId) => {
       try {
@@ -269,6 +275,7 @@ function UserProvider({ children }) {
     },
     [toast]
   );
+
   const handleUserDelete = useCallback(
     async (userId) => {
       try {
@@ -288,6 +295,7 @@ function UserProvider({ children }) {
     },
     [toast]
   );
+
   const handleUserDisapprove = useCallback(
     async (userId) => {
       try {
@@ -307,6 +315,68 @@ function UserProvider({ children }) {
     },
     [toast]
   );
+
+  const handleUpdatLeavePolicy = useCallback(
+    async (formData, date) => {
+      try {
+        const monthsBetween = differenceInMonths(date.to, date.from);
+
+        console.log("formData", formData);
+        const monthsArray = [];
+
+        for (let i = 0; i <= monthsBetween; i++) {
+          const newMonth = new Date(date.from);
+          newMonth.setMonth(date.from.getMonth() + i);
+          monthsArray.push(
+            parseInt(newMonth.toLocaleDateString().split("/")[0] - 1)
+          );
+        }
+        const leavePolicy = {
+          ...formData,
+          vacation_allowedMonths: monthsArray,
+        };
+
+        console.log(leavePolicy);
+
+        const res = await updateLeavePolicy(leavePolicy);
+        console.log(res);
+        toast({
+          className: "bg-black text-white",
+          title: "Success",
+          description: `Leave policy updated successfully`,
+        });
+      } catch (error) {
+        console.log("error", error);
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: `Failed to update leave policy`,
+        });
+      }
+    },
+    [toast]
+  );
+
+  const handleLeaveApproval = useCallback(
+    async (leaveId, status, message) => {
+      try {
+        const res = await approveLeave(leaveId, status, message);
+        toast({
+          className: "bg-black text-white",
+          title: "Success",
+          description: `Leave ${status} successfully`,
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: `Failed to apply changes leave`,
+        });
+      }
+    },
+    [toast]
+  );
+
   return (
     <UserContext.Provider
       value={{
@@ -319,10 +389,12 @@ function UserProvider({ children }) {
         handleLeaveDelete,
         handleSendReport,
 
-        // Admin 
+        // Admin
         handleUserApproval,
         handleUserDelete,
-        handleUserDisapprove
+        handleUserDisapprove,
+        handleUpdatLeavePolicy,
+        handleLeaveApproval,
       }}
     >
       {children}
