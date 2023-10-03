@@ -1,42 +1,10 @@
 "use server";
-// import { Workbook } from "exceljs";
 import puppeteer from "puppeteer";
-import { SMTPClient } from "emailjs";
 import { readFile } from "fs/promises";
 
-// export async function generateReportCSV() {
-//   try {
-//     const data = [
-//       { name: "John", total: 1000 },
-//       { name: "Alice", total: 2000 },
-//       { name: "Bob", total: 1500 },
-//     ];
-//     const workbook = new Workbook();
-//     const sheet = workbook.addWorksheet("Report");
+import { Resend } from 'resend';
 
-//     // Define the columns and their widths
-//     sheet.columns = [
-//       { header: "Name", key: "name", width: 15 },
-//       { header: "Total", key: "total", width: 15 },
-//     ];
-
-//     // Add data to the worksheet and apply styles to each cell
-//     data.forEach((item) => {
-//       const row = sheet.addRow({ name: item.name, total: item.total });
-//       row.eachCell((cell) => {
-//         cell.alignment = { vertical: 'middle', horizontal: 'center' };
-//         cell.font = { size: 12 };
-//         cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-//       });
-//     });
-
-//     const filePath = "report.xlsx";
-//     await workbook.xlsx.writeFile(filePath);
-//     console.log("Report generated successfully.");
-//   } catch (error) {
-//     console.error("Something went wrong:", error);
-//   }
-// }
+const resend = new Resend(process.env.RESEND_API);
 
 export async function generateReportPDF(approvedLeave, date, user) {
   try {
@@ -205,31 +173,23 @@ export async function sendMail(user) {
     "utf-8"
   );
 
-  const mail = "aloks.uber@gmail.com";
-  const pwd = "zxccqaehbsbsunkf";
-
-  const client = new SMTPClient({
-    user: mail,
-    password: pwd,
-    host: "smtp.gmail.com",
-    ssl: true,
-  });
-
   try {
-    const message = await client.sendAsync({
-      text: "i hope this works",
-      from: mail,
+    const pdfContent = await readFile("Leave_reports/leave-report.pdf");
+
+    const data = await resend.emails.send({
+      from: "LMS - BCIIT <onboarding@resend.dev>",
       to: user.email,
       subject: `Dear, ${user.name} here is your leave report!`,
-      attachment: [
-        { data: email_template, alternative: true },
+      html: email_template,
+      attachments: [
         {
-          path: "Leave_reports/leave-report.pdf",
-          type: "application/pdf",
-          name: `${user.name}'s Leave Report.pdf`,
+          filename: `${user.name}'s Leave Report.pdf`,
+          content: pdfContent,
+          encoding: 'base64', 
         },
       ],
     });
+    console.log("data :>> ", data);
     return {
       status: 200,
       message: "email sent successfully",
