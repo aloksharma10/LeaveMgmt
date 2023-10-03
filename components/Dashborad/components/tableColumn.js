@@ -2,8 +2,6 @@
 import {
   ArrowUpDown,
   CircleOff,
-  MoreHorizontal,
-  ShieldCheck,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -362,7 +360,7 @@ export const leaveReportColumns = [
     ),
   },
   {
-    accessorKey: "rejectedMessage",
+    accessorKey: "message",
     header: "Rejected Reason",
     cell: ({ row }) => {
       const rowData = row.original;
@@ -374,15 +372,15 @@ export const leaveReportColumns = [
           <Tooltip>
             <TooltipTrigger>
               <div className="text-ellipsis w-20 whitespace-nowrap overflow-clip capitalize">
-                {row.getValue("rejectedMessage")
-                  ? row.getValue("rejectedMessage")
+                {row.getValue("message")
+                  ? row.getValue("message")
                   : "No Message..."}
               </div>
             </TooltipTrigger>
             <TooltipContent>
               <p>
-                {row.getValue("rejectedMessage")
-                  ? row.getValue("rejectedMessage")
+                {row.getValue("message")
+                  ? row.getValue("message")
                   : "No Message..."}
               </p>
             </TooltipContent>

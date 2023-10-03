@@ -185,16 +185,18 @@ export async function generateReportPDF(approvedLeave, date, user) {
 
     await browser.close();
 
-    await sendMail({name: user.name, email: user.email})
+    const res = await sendMail({name: user.name, email: user.email})
 
     return {
       status: 200,
       message: "PDF Report generated successfully.",
+      emailStatus: res.status,
+      emailMessage: res.message
     };
   } catch (error) {
     return {
       status: 500,
-      message: "something went wrong",
+      message: "something went wrong" + error,
     };
   }
 }
@@ -215,8 +217,8 @@ export async function sendMail(user) {
   try {
     const message = await client.sendAsync({
       text: "i hope this works",
-      from: user.email,
-      to: "aloks.uber@gmail.com, aloksharma10969@gmail.com",
+      from: mail,
+      to:  user.email,
       subject: `Dear, ${user.name} here is your leave report!`,
       attachment: [
         { data: email_template, alternative: true },
@@ -232,10 +234,9 @@ export async function sendMail(user) {
       message: "email sent successfully",
     };
   } catch (err) {
-    console.error(err);
     return {
       status: 500,
-      message: "something went wrong",
+      message: "something went wrong"+ err,
     };
   }
 }

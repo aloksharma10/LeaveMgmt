@@ -240,16 +240,23 @@ function UserProvider({ children }) {
           name: user.name,
           email: user.email,
         });
-        toast({
-          className: "bg-black text-white",
-          title: "Success",
-          description: `report has been sent on your email ${user.email}`,
+        if (sendReport.status == 200 && sendReport.emailStatus == 200) {
+         return toast({
+            className: "bg-black text-white",
+            title: "Success",
+            description: `report has been sent on your email ${user.email}`,
+          });
+        }
+        return toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: `Failed to Send Report` + sendReport.emailMessage,
         });
       } catch (error) {
         toast({
           variant: "destructive",
           title: "Something went wrong",
-          description: `Failed to Send Report`,
+          description: `Failed to Send Report` + error,
         });
       }
     },
