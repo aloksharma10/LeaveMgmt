@@ -38,8 +38,6 @@ import { readFile } from "fs/promises";
 //   }
 // }
 
-const mail = "aloks.uber@gmail.com";
-const pwd = "zxccqaehbsbsunkf";
 export async function generateReportPDF(approvedLeave, date, user) {
   try {
     const browser = await puppeteer.launch({
@@ -185,13 +183,13 @@ export async function generateReportPDF(approvedLeave, date, user) {
 
     await browser.close();
 
-    const res = await sendMail({name: user.name, email: user.email})
+    const res = await sendMail({ name: user.name, email: user.email });
 
     return {
       status: 200,
       message: "PDF Report generated successfully.",
       emailStatus: res.status,
-      emailMessage: res.message
+      emailMessage: res.message,
     };
   } catch (error) {
     return {
@@ -207,6 +205,9 @@ export async function sendMail(user) {
     "utf-8"
   );
 
+  const mail = "aloks.uber@gmail.com";
+  const pwd = "zxccqaehbsbsunkf";
+
   const client = new SMTPClient({
     user: mail,
     password: pwd,
@@ -218,7 +219,7 @@ export async function sendMail(user) {
     const message = await client.sendAsync({
       text: "i hope this works",
       from: mail,
-      to:  user.email,
+      to: user.email,
       subject: `Dear, ${user.name} here is your leave report!`,
       attachment: [
         { data: email_template, alternative: true },
@@ -236,7 +237,7 @@ export async function sendMail(user) {
   } catch (err) {
     return {
       status: 500,
-      message: "something went wrong"+ err,
+      message: "something went wrong" + err,
     };
   }
 }
