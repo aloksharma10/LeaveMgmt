@@ -144,7 +144,7 @@ export async function generateReportPDF(approvedLeave, date, user) {
 
     // Generate the PDF
     await page.pdf({
-      path: "Leave_reports/leave-report.pdf",
+      path: "../Leave_reports/leave-report.pdf",
       format: "A4",
       printBackground: true,
     });
@@ -167,12 +167,12 @@ export async function generateReportPDF(approvedLeave, date, user) {
 
 export async function sendMail(user) {
   const email_template = await readFile(
-    "Leave_reports/templates/indiviusal.html",
+    "../Leave_reports/templates/indiviusal.html",
     "utf-8"
   );
 
   try {
-    const pdfContent = await readFile("Leave_reports/leave-report.pdf");
+    const pdfContent = await readFile("../Leave_reports/leave-report.pdf");
 
     const data = await resend.emails.send({
       from: "LMS - BCIIT <onboarding@resend.dev>",
