@@ -13,7 +13,7 @@ import {
   getUserLeaveReport,
 } from "@/actions/userLeaveActions";
 import { userSignup } from "@/actions/userAction";
-import { generateReportPDF } from "@/actions/genrateReport";
+import { generateReportPDF, sendMail } from "@/actions/genrateReport";
 import {
   approveLeave,
   approveUser,
@@ -236,27 +236,23 @@ function UserProvider({ children }) {
             description: `No approved leave found to send report`,
           });
         }
-        const sendReport = await generateReportPDF(approvedLeave, date, {
-          name: user.name,
-          email: user.email,
-        });
-        if (sendReport.status == 200 && sendReport.emailStatus == 200) {
-         return toast({
-            className: "bg-black text-white",
-            title: "Success",
-            description: `report has been sent on your email ${user.email}`,
-          });
-        }
+        // const sendReport = await generateReportPDF(approvedLeave, date, {
+        //   name: user.name,
+        //   email: user.email,
+        // });
+       const mail= await sendMail({ name: user.name, email: user.email });
+       console.log("mail",mail);
+
         return toast({
           variant: "destructive",
           title: "Something went wrong",
-          description: `Failed to Send Report` + sendReport.emailMessage,
+          description: `Failed to Send Report1`,
         });
       } catch (error) {
         toast({
           variant: "destructive",
           title: "Something went wrong",
-          description: `Failed to Send Report` + error,
+          description: `Failed to Send Report`,
         });
       }
     },

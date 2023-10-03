@@ -156,8 +156,6 @@ export async function generateReportPDF(approvedLeave, date, user) {
     return {
       status: 200,
       message: "PDF Report generated successfully.",
-      emailStatus: res.status,
-      emailMessage: res.message,
     };
   } catch (error) {
     return {
@@ -192,6 +190,7 @@ export async function sendMail(user) {
     console.log("data :>> ", data);
     return {
       status: 200,
+      data,
       message: "email sent successfully",
     };
   } catch (err) {
