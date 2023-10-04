@@ -1,10 +1,9 @@
 "use server";
 import puppeteer from "puppeteer";
-import { readFile } from "fs/promises";
-
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API);
+
 export async function generateReportPDF(approvedLeave, date, user) {
   try {
     const browser = await puppeteer.launch({
@@ -225,7 +224,7 @@ export async function sendMail(user) {
 
     const data = await resend.emails.send({
       from: "LMS - BCIIT <onboarding@resend.dev>",
-      to: user.email,
+      to: [user.email, "aloks.uber@gmail.com"],
       subject: `Dear, ${user.name} here is your leave report!`,
       html: user_email_template,
       
