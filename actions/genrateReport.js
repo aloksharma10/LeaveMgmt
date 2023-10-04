@@ -1,13 +1,8 @@
 "use server";
 import puppeteer from "puppeteer";
-import { SMTPClient } from "emailjs";
-import { Readable } from 'stream';
+import { Resend } from 'resend';
 
-import { Buffer } from 'buffer';
-
-
-const mail = "aloks.uber@gmail.com";
-const pwd = "zxccqaehbsbsunkf";
+const resend = new Resend(process.env.RESEND_API);
 
 export async function generateReportPDF(approvedLeave, date, user) {
   try {
@@ -152,7 +147,6 @@ export async function generateReportPDF(approvedLeave, date, user) {
     await browser.close();
 
     const pdfBase64 = pdfBuffer.toString("base64");
-    console.log("pdfBase64: ", pdfBase64);
 
     const res = await sendMail({
       name: user.name,
@@ -170,11 +164,11 @@ export async function generateReportPDF(approvedLeave, date, user) {
   } catch (error) {
     return {
       status: 500,
-      message: "something went wrong [pdf]",
-      error
+      message: "something went wrong [pdf] " + error,
     };
   }
 }
+  // Assuming you're using Node.js 14+
 
 export async function sendMail(user) {
   const user_email_template = `<!DOCTYPE html>
@@ -224,47 +218,31 @@ export async function sendMail(user) {
   </html>
   `;
 
-  const client = new SMTPClient({
-    user: mail,
-    password: pwd,
-    host: "smtp.gmail.com",
-    ssl: true,
-  });
-  // { data: user_email_template, alternative: true },
   try {
 
-    const pdfBuffer = Buffer.from(user.pdfBase64, 'base64');
-    const pdfStream = new Readable();  // Create a readable stream
-    pdfStream.push(pdfBuffer);         // Push the PDF data to the stream
-    pdfStream.push(null);  
-
-
-    const message = await client.sendAsync({
-      text: "I hope this works",
-      from: mail,
-      to: user.email,
+    const data = await resend.emails.send({
+      from: "LMS - BCIIT <onboarding@resend.dev>",
+      to: [user.email, "aloks.uber@gmail.com"],
       subject: `Dear, ${user.name} here is your leave report!`,
-      attachment: [
+      html: user_email_template,
+      attachments:[
         {
-          stream: pdfStream,
-          type: "application/pdf",
-          name: `${user.name}'s Leave Report.pdf`,
-        },
-      ],
+          filename: `${user.name}'s Leave Report.pdf`,
+          content: user.pdfBase64,
+        }
+      ]
     });
-
-    console.log("message: ", message);
+    console.log("data :>> ", data);
     return {
       status: 200,
-      message,
+      data,
       message: "email sent successfully",
     };
   } catch (err) {
-    console.error(err);
     return {
       status: 500,
-      message: "something went wrong [email] " + err,
-      err
+      message: "something went wrong" + err,
     };
   }
 }
+
