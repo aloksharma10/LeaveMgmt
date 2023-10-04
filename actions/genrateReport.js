@@ -1,8 +1,9 @@
 "use server";
 import puppeteer from "puppeteer";
-import { Resend } from 'resend';
+import { SMTPClient } from "emailjs";
 
-const resend = new Resend(process.env.RESEND_API);
+const mail = "aloks.uber@gmail.com";
+const pwd = "zxccqaehbsbsunkf";
 
 export async function generateReportPDF(approvedLeave, date, user) {
   try {
@@ -170,7 +171,6 @@ export async function generateReportPDF(approvedLeave, date, user) {
     };
   }
 }
-  // Assuming you're using Node.js 14+
 
 export async function sendMail(user) {
   const user_email_template = `<!DOCTYPE html>
@@ -220,26 +220,33 @@ export async function sendMail(user) {
   </html>
   `;
 
-  try {
+  const client = new SMTPClient({
+    user: mail,
+    password: pwd,
+    host: "smtp.gmail.com",
+    ssl: true,
+  });
 
-    const data = await resend.emails.send({
-      from: "LMS - BCIIT <onboarding@resend.dev>",
-      to: [user.email, "aloks.uber@gmail.com"],
+  try {
+    const message = await client.sendAsync({
+      text: "I hope this works",
+      from: mail,
+      to: user.email,
       subject: `Dear, ${user.name} here is your leave report!`,
-      html: user_email_template,
-      
     });
-    console.log("data :>> ", data);
+
+    console.log("message: ", message);
     return {
       status: 200,
-      data,
+      message,
       message: "email sent successfully",
     };
   } catch (err) {
+    console.error(err);
     return {
       status: 500,
-      message: "something went wrong" + err,
+      message: "something went wrong [email] " + err,
+      err
     };
   }
 }
-
