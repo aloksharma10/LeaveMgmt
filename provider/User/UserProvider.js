@@ -236,12 +236,12 @@ function UserProvider({ children }) {
             description: `No approved leave found to send report`,
           });
         }
-        // const sendReport = await generateReportPDF(approvedLeave, date, {
-        //   name: user.name,
-        //   email: user.email,
-        // });
-       const mail= await sendMail({ name: user.name, email: user.email });
-       console.log("mail",mail);
+        const sendReport = await generateReportPDF(approvedLeave, date, {
+          name: user.name,
+          email: user.email,
+        });
+       
+       console.log("mail",sendReport);
 
        toast({
         className: "bg-black text-white",
