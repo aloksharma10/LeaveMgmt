@@ -1,9 +1,10 @@
 "use server";
 import puppeteer from "puppeteer";
-import { SMTPClient } from "emailjs";
+import { readFile } from "fs/promises";
 
-const mail = "aloks.uber@gmail.com";
-const pwd = "zxccqaehbsbsunkf";
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API);
 export async function generateReportPDF(approvedLeave, date, user) {
   try {
     const browser = await puppeteer.launch({
@@ -170,6 +171,7 @@ export async function generateReportPDF(approvedLeave, date, user) {
     };
   }
 }
+  // Assuming you're using Node.js 14+
 
 export async function sendMail(user) {
   const user_email_template = `<!DOCTYPE html>
@@ -219,41 +221,32 @@ export async function sendMail(user) {
   </html>
   `;
 
-  const client = new SMTPClient({
-    user: mail,
-    password: pwd,
-    host: "smtp.gmail.com",
-    ssl: true,
-  });
-
   try {
-    const message = await client.sendAsync({
-      text: "I hope this works",
-      from: mail,
+
+    const data = await resend.emails.send({
+      from: "LMS - BCIIT <onboarding@resend.dev>",
       to: user.email,
       subject: `Dear, ${user.name} here is your leave report!`,
-      attachment: [
-        { data: user_email_template, alternative: true },
+      html: user_email_template,
+      attachments: [
         {
-          data: Buffer.from(user.pdfBase64, "base64"),
-          type: "application/pdf",
-          name: `${user.name}'s Leave Report.pdf`,
+          filename: `${user.name}'s Leave Report.pdf`,
+          content: user.pdfBase64,
+          encoding: 'base64', 
         },
       ],
     });
-
-    console.log("message: ", message);
+    console.log("data :>> ", data);
     return {
       status: 200,
-      message,
+      data,
       message: "email sent successfully",
     };
   } catch (err) {
-    console.error(err);
     return {
       status: 500,
-      message: "something went wrong [email] " + err,
-      err
+      message: "something went wrong" + err,
     };
   }
 }
+
