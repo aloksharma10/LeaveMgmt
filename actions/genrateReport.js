@@ -1,5 +1,7 @@
 "use server";
-import puppeteer from "puppeteer";
+// import puppeteer from "puppeteer";
+import { chromium } from 'playwright';
+
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API);
@@ -7,12 +9,9 @@ const resend = new Resend(process.env.RESEND_API);
 export async function generateReportPDF(approvedLeave, date, user) {
   let browser;
   try {
-    browser = await puppeteer.launch({headless: 'new'});
-    
-    const page = await browser.newPage();
-
-    // Set screen size
-    await page.setViewport({ width: 1080, height: 1024 });
+    browser = await chromium.launch();
+    const context = await browser.newContext();
+    const page = await context.newPage();
 
     const tableHeader = `<tr>
     <th>Title</th>
@@ -164,7 +163,7 @@ export async function generateReportPDF(approvedLeave, date, user) {
       message: "something went wrong [pdf] " + error,
     };
   }finally{
-    await browser.close();
+    await browser?.close();
   }
 }
   // Assuming you're using Node.js 14+
