@@ -5,13 +5,11 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API);
 
 export async function generateReportPDF(approvedLeave, date, user) {
+  let browser;
   try {
-    const browser = await puppeteer.launch({
-      headless: 'new',
-    });
+    browser = await puppeteer.launch({headless: 'new'});
     
     const page = await browser.newPage();
-    await page.goto("https://developer.chrome.com/");
 
     // Set screen size
     await page.setViewport({ width: 1080, height: 1024 });
@@ -145,8 +143,6 @@ export async function generateReportPDF(approvedLeave, date, user) {
       printBackground: true,
     });
 
-    await browser.close();
-
     const pdfBase64 = pdfBuffer.toString("base64");
 
     const res = await sendMail({
@@ -167,6 +163,8 @@ export async function generateReportPDF(approvedLeave, date, user) {
       status: 500,
       message: "something went wrong [pdf] " + error,
     };
+  }finally{
+    await browser.close();
   }
 }
   // Assuming you're using Node.js 14+
