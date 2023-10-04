@@ -27,6 +27,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
+    "emailjs": "^4.0.3",
     "eslint-config-next": "^13.5.3",
     "init": "^0.1.2",
     "lucide-react": "^0.274.0",
