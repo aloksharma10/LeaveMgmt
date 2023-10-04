@@ -165,27 +165,29 @@ export async function generateReportPDF(approvedLeave, date, user) {
   }
 }
 
+  // Assuming you're using Node.js 14+
+
 export async function sendMail(user) {
-  const email_template = await readFile(
-    "../Leave_reports/templates/indiviusal.html",
-    "utf-8"
-  );
+  // const email_template = await readFile(
+  //   "./Leave_reports/templates/indiviusal.html",
+  //   "utf-8"
+  // );
 
   try {
-    const pdfContent = await readFile("../Leave_reports/leave-report.pdf");
+    // const pdfContent = await readFile("../Leave_reports/leave-report.pdf");
 
     const data = await resend.emails.send({
       from: "LMS - BCIIT <onboarding@resend.dev>",
       to: user.email,
       subject: `Dear, ${user.name} here is your leave report!`,
-      html: email_template,
-      attachments: [
-        {
-          filename: `${user.name}'s Leave Report.pdf`,
-          content: pdfContent,
-          encoding: 'base64', 
-        },
-      ],
+      // html: email_template,
+      // attachments: [
+      //   {
+      //     filename: `${user.name}'s Leave Report.pdf`,
+      //     content: pdfContent,
+      //     encoding: 'base64', 
+      //   },
+      // ],
     });
     console.log("data :>> ", data);
     return {
@@ -200,3 +202,4 @@ export async function sendMail(user) {
     };
   }
 }
+
