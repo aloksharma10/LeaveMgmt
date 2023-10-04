@@ -1,11 +1,11 @@
 "use server";
 import puppeteer from "puppeteer";
+import { SMTPClient } from "emailjs";
 import { readFile } from "fs/promises";
 
-import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API);
-
+const mail = "aloks.uber@gmail.com";
+const pwd = "zxccqaehbsbsunkf";
 export async function generateReportPDF(approvedLeave, date, user) {
   try {
     const browser = await puppeteer.launch({
@@ -144,14 +144,14 @@ export async function generateReportPDF(approvedLeave, date, user) {
 
     // Generate the PDF
     await page.pdf({
-      path: "../Leave_reports/leave-report.pdf",
+      path: "./Leave_reports/leave-report.pdf",
       format: "A4",
       printBackground: true,
     });
 
     await browser.close();
 
-    const res = await sendMail({ name: user.name, email: user.email });
+    await sendMail({name: user.name, email: user.email})
 
     return {
       status: 200,
@@ -160,46 +160,50 @@ export async function generateReportPDF(approvedLeave, date, user) {
   } catch (error) {
     return {
       status: 500,
-      message: "something went wrong" + error,
+      message: "something went wrong",
     };
   }
 }
 
-  // Assuming you're using Node.js 14+
-
 export async function sendMail(user) {
-  // const email_template = await readFile(
-  //   "./Leave_reports/templates/indiviusal.html",
-  //   "utf-8"
-  // );
+  const email_template = await readFile(
+    "./Leave_reports/templates/indiviusal.html",
+    "utf-8"
+  );
+
+  const client = new SMTPClient({
+    user: mail,
+    password: pwd,
+    host: "smtp.gmail.com",
+    ssl: true,
+  });
 
   try {
-    // const pdfContent = await readFile("../Leave_reports/leave-report.pdf");
-
-    const data = await resend.emails.send({
-      from: "LMS - BCIIT <onboarding@resend.dev>",
-      to: user.email,
+    const message = await client.sendAsync({
+      text: "i hope this works",
+      from: mail,
+      to:  user.email,
       subject: `Dear, ${user.name} here is your leave report!`,
-      // html: email_template,
-      // attachments: [
-      //   {
-      //     filename: `${user.name}'s Leave Report.pdf`,
-      //     content: pdfContent,
-      //     encoding: 'base64', 
-      //   },
-      // ],
+      attachment: [
+        { data: email_template, alternative: true },
+        {
+          path: "./Leave_reports/leave-report.pdf",
+          type: "application/pdf",
+          name: `${user.name}'s Leave Report.pdf`,
+        },
+      ],
     });
-    console.log("data :>> ", data);
+    console.log("message: ", message)
     return {
       status: 200,
-      data,
+      message,
       message: "email sent successfully",
     };
   } catch (err) {
+    console.error(err);
     return {
       status: 500,
-      message: "something went wrong" + err,
+      message: "something went wrong",
     };
   }
 }
-

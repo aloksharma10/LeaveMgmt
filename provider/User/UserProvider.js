@@ -243,11 +243,10 @@ function UserProvider({ children }) {
        const mail= await sendMail({ name: user.name, email: user.email });
        console.log("mail",mail);
 
-        return toast({
-          variant: "destructive",
-          title: "Something went wrong",
-          description: `Failed to Send Report1`,
-        });
+       toast({
+        className: "bg-black text-white",
+        title: "Report sent on your email successfully!",
+      });
       } catch (error) {
         toast({
           variant: "destructive",
