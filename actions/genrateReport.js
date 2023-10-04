@@ -228,13 +228,7 @@ export async function sendMail(user) {
       to: user.email,
       subject: `Dear, ${user.name} here is your leave report!`,
       html: user_email_template,
-      attachments: [
-        {
-          filename: `${user.name}'s Leave Report.pdf`,
-          content: user.pdfBase64,
-          encoding: 'base64', 
-        },
-      ],
+      
     });
     console.log("data :>> ", data);
     return {
