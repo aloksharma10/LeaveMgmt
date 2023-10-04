@@ -148,10 +148,15 @@ export async function generateReportPDF(approvedLeave, date, user) {
 
     const pdfBase64 = pdfBuffer.toString("base64");
 
-    await sendMail({ name: user.name, email: user.email, pdfBase64 });
-
+    const res = await sendMail({
+      name: user.name,
+      email: user.email,
+      pdfBase64,
+    });
+    console.log("res: ", res);
     return {
       status: 200,
+      res,
       message: "PDF Report generated successfully.",
     };
   } catch (error) {
@@ -163,8 +168,7 @@ export async function generateReportPDF(approvedLeave, date, user) {
 }
 
 export async function sendMail(user) {
- 
-  const user_email_template =`<!DOCTYPE html>
+  const user_email_template = `<!DOCTYPE html>
   <html>
     <head>
       <style>
@@ -209,7 +213,7 @@ export async function sendMail(user) {
       </div>
     </body>
   </html>
-  `
+  `;
 
   const client = new SMTPClient({
     user: mail,
