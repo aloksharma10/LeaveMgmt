@@ -7,8 +7,7 @@ const resend = new Resend(process.env.RESEND_API);
 export async function generateReportPDF(approvedLeave, date, user) {
   try {
     const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+      headless: 'new',
     });
     
     const page = await browser.newPage();
