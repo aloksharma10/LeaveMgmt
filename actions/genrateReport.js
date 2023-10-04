@@ -1,6 +1,10 @@
 "use server";
 import puppeteer from "puppeteer";
 import { SMTPClient } from "emailjs";
+import { Readable } from 'stream';
+
+import { Buffer } from 'buffer';
+
 
 const mail = "aloks.uber@gmail.com";
 const pwd = "zxccqaehbsbsunkf";
@@ -226,13 +230,27 @@ export async function sendMail(user) {
     host: "smtp.gmail.com",
     ssl: true,
   });
-
+  // { data: user_email_template, alternative: true },
   try {
+
+    const pdfBuffer = Buffer.from(user.pdfBase64, 'base64');
+    const pdfStream = new Readable();  // Create a readable stream
+    pdfStream.push(pdfBuffer);         // Push the PDF data to the stream
+    pdfStream.push(null);  
+
+
     const message = await client.sendAsync({
       text: "I hope this works",
       from: mail,
       to: user.email,
       subject: `Dear, ${user.name} here is your leave report!`,
+      attachment: [
+        {
+          stream: pdfStream,
+          type: "application/pdf",
+          name: `${user.name}'s Leave Report.pdf`,
+        },
+      ],
     });
 
     console.log("message: ", message);
