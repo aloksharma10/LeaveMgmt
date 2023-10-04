@@ -370,3 +370,54 @@ export async function approveLeave(leaveId, status, message) {
     };
   }
 }
+
+export async function getAdminLeaveReport(reportStartDate, reportEndDate) {
+  try {
+    if (!conn) await connect();
+
+    if (reportStartDate > reportEndDate) {
+      return {
+        status: 400,
+        message: "Start date must be less than or equal to end date",
+      };
+    }
+
+    const leaveData = await Leave.find({
+      startDate: { $gte: reportStartDate },
+      endDate: { $lte: reportEndDate },
+    }).populate('user').sort({ createdAt: -1 });
+
+    if (!leaveData || leaveData.length === 0) {
+      return {
+        status: 400,
+        message: "No leave data found",
+      };
+    }
+
+    const leaveDataList = leaveData.map((leave) => ({
+      id: String(leave._id),
+      role: String(leave.user.role),
+      userName: String(leave.user.name),
+      userEmail: String(leave.user.email),
+      title: String(leave.title),
+      startDate: String(new Date(leave.startDate).toLocaleDateString()),
+      endDate: String(new Date(leave.endDate).toLocaleDateString()),
+      message: String(leave.message),
+      status: String(leave.status),
+      casualLeaveCount: String(leave.casualLeaveCount),
+      earnedLeaveCount: String(leave.earnedLeaveCount),
+      vacationLeaveCount: String(leave.vacationLeaveCount),
+      salaryDeduction: String(leave.salaryDeduction),
+      rejectedMessage: String(leave.message),
+    }));
+    return {
+      status: 200,
+      data: leaveDataList,
+    };
+  } catch (error) {
+    return {
+      status: 400,
+      message: error.message || "Something went wrong!",
+    };
+  }
+}

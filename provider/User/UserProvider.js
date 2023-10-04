@@ -19,6 +19,7 @@ import {
   approveUser,
   deleteUser,
   disapproveUser,
+  getAdminLeaveReport,
   updateLeavePolicy,
 } from "@/actions/adminLeaveActions";
 import { differenceInMonths } from "date-fns";
@@ -239,6 +240,7 @@ function UserProvider({ children }) {
         const sendReport = await generateReportPDF(approvedLeave, date, {
           name: user.name,
           email: user.email,
+          role: user.role === "admin" ? "admin" : "user",
         });
        
    
@@ -380,6 +382,28 @@ function UserProvider({ children }) {
     [toast]
   );
 
+  const handleAdminMonthlyReport = useCallback(
+    async (date) => {
+      try {
+        const reportStartDate = new Date(date.from).toISOString().split("T")[0];
+        const reportEndDate = new Date(date.to).toISOString().split("T")[0];
+        const res = await getAdminLeaveReport(
+          reportStartDate,
+          reportEndDate
+        );
+        toast({
+          className: "bg-black text-white",
+          title: "Success",
+          description: `You are viewing the latest leave report ${reportStartDate} to ${reportEndDate}`,
+        });
+
+        return res;
+      } catch (error) {
+        return [];
+      }
+    },
+    [toast]
+  );
   return (
     <UserContext.Provider
       value={{
@@ -398,6 +422,7 @@ function UserProvider({ children }) {
         handleUserDisapprove,
         handleUpdatLeavePolicy,
         handleLeaveApproval,
+        handleAdminMonthlyReport
       }}
     >
       {children}

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export default async function page() {
   const session = await getServerSession(authOptions);
   if (session?.user) {
-    return redirect(session?.user.role === "/user" ? "/user" : "/admin");
+    return redirect(session?.user.role === "staff" || "faculty" ? "/user" : "/admin");
   }
   return <Signup />;
 }
