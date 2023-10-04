@@ -147,13 +147,16 @@ export async function generateReportPDF(approvedLeave, date, user) {
     await browser.close();
 
     const pdfBase64 = pdfBuffer.toString("base64");
+    console.log("pdfBase64: ", pdfBase64);
 
     const res = await sendMail({
       name: user.name,
       email: user.email,
       pdfBase64,
     });
+
     console.log("res: ", res);
+
     return {
       status: 200,
       res,
@@ -162,7 +165,8 @@ export async function generateReportPDF(approvedLeave, date, user) {
   } catch (error) {
     return {
       status: 500,
-      message: "something went wrong",
+      message: "something went wrong [pdf]",
+      error
     };
   }
 }
@@ -248,7 +252,8 @@ export async function sendMail(user) {
     console.error(err);
     return {
       status: 500,
-      message: "something went wrong",
+      message: "something went wrong [email] " + err,
+      err
     };
   }
 }
