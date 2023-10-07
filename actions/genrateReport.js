@@ -1,11 +1,6 @@
 "use server";
 import { chromium } from "playwright";
-import { generateAdminTable, generateUserTable } from "./utils";
-import { SMTPClient } from "emailjs";
-
-
-const mail = "aloks.uber@gmail.com";
-const pwd = "zxccqaehbsbsunkf";
+import { generateAdminTable, generateUserTable, sendMail } from "./utils";
 
 export async function generateReportPDF(approvedLeave, date, user) {
   let browser;
@@ -14,10 +9,10 @@ export async function generateReportPDF(approvedLeave, date, user) {
     const context = await browser.newContext();
     const page = await context.newPage();
 
-    const { tableHeader, tableData } = user.role === 'admin'
-      ? await generateAdminTable(approvedLeave)
-      : await generateUserTable(approvedLeave);
-
+    const { tableHeader, tableData } =
+      user.role === "admin"
+        ? await generateAdminTable(approvedLeave)
+        : await generateUserTable(approvedLeave);
 
     await page.setContent(
       `<!DOCTYPE html>
@@ -157,85 +152,3 @@ export async function generateReportPDF(approvedLeave, date, user) {
   }
 }
 
-export async function sendMail(user) {
-  const user_email_template = `<!DOCTYPE html>
-  <html>
-    <head>
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-        }
-        .leave-details {
-          width: 52%;
-          margin: 0 auto;
-          border: 1px solid #dddddd;
-          padding: 20px;
-          margin-top: 20px;
-        }
-        .leave-details h2 {
-          text-align: center;
-          margin-bottom: 10px;
-        }
-        .leave-table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 10px;
-        }
-        .leave-table th,
-        .leave-table td {
-          border: 1px solid #dddddd;
-          text-align: left;
-          padding: 8px;
-        }
-        .leave-table th {
-          background-color: #f2f2f2;
-        }
-      </style>
-    </head>
-    <body>
-      <div className="leave-details">
-          <p>Your leave report, Please find the attachment</p>
-          <p>Note: <span style="color: red;">This report only contains approved leave reports</span></p>
-        <div>
-          <div>BCIIT Technical Team,</div>
-          <div style="margin-top: 5px">Alok Sharma</div>
-        </div>
-      </div>
-    </body>
-  </html>
-  `;
-  const client = new SMTPClient({
-    user: mail,
-    password: pwd,
-    host: "smtp.gmail.com",
-    ssl: true,
-  });
-
-  try {
-    const message = await client.sendAsync({
-      text: "I hope this works",
-      from: `Leave Portal - BCIIT <${mail}>`,
-      to: user.email,
-      subject: `Dear, ${user.name} here is your leave report!`,
-      attachment: [
-        { data: user_email_template, alternative: true },
-        {
-          data: Buffer.from(user.pdfBase64, "base64"),
-          type: "application/pdf",
-          name: `${user.name}'s Leave Report.pdf`,
-        },
-      ],
-    });
-
-    console.log("data: ", message);
-    return {
-      status: 200,
-      message: "email sent successfully",
-    };
-  } catch (err) {
-    return {
-      status: 500,
-      message: "something went wrong" + err,
-    };
-  }
-}

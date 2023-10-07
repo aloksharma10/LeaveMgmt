@@ -1,3 +1,6 @@
+import { SMTPClient } from "emailjs";
+
+
 export function getMonthName(monthNumber) {
   const months = [
     "Jan",
@@ -91,4 +94,87 @@ export async function generateAdminTable(approvedLeave) {
     tableHeader,
     tableData
   };
+}
+
+export async function sendMail(user) {
+  const user_email_template = `<!DOCTYPE html>
+  <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+        }
+        .leave-details {
+          width: 52%;
+          margin: 0 auto;
+          border: 1px solid #dddddd;
+          padding: 20px;
+          margin-top: 20px;
+        }
+        .leave-details h2 {
+          text-align: center;
+          margin-bottom: 10px;
+        }
+        .leave-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 10px;
+        }
+        .leave-table th,
+        .leave-table td {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+        .leave-table th {
+          background-color: #f2f2f2;
+        }
+      </style>
+    </head>
+    <body>
+      <div className="leave-details">
+          <p>Your leave report, Please find the attachment</p>
+          <p>Note: <span style="color: red;">This report only contains approved leave reports</span></p>
+        <div>
+          <div>BCIIT Technical Team,</div>
+          <div style="margin-top: 5px">Alok Sharma</div>
+        </div>
+      </div>
+    </body>
+  </html>
+  `;
+  const client = new SMTPClient({
+    user: process.env.SMTP_ID,
+    password: process.env.SMTP_PASS,
+    host: "smtp.gmail.com",
+    ssl: true,
+  });
+
+  try {
+    const message = await client.sendAsync({
+      text: "I hope this works",
+      from: `Leave Portal - BCIIT <${process.env.SMTP_ID}>`,
+      to: user.email,
+      subject: `Dear, ${user.name} here is your leave report!`,
+      attachment: [
+        { data: user_email_template, alternative: true },
+        {
+          data: Buffer.from(user.pdfBase64, "base64"),
+          type: "application/pdf",
+          name: `${user.name}'s Leave Report.pdf`,
+        },
+      ],
+    });
+
+    console.log("data: ", message);
+    return {
+      status: 200,
+      message: "email sent successfully",
+    };
+  } catch (err) {
+    return {
+      status: 500,
+      message: "something went wrong" + err,
+    };
+  }
 }

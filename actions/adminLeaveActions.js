@@ -371,7 +371,7 @@ export async function approveLeave(leaveId, status, message) {
   }
 }
 
-export async function getAdminLeaveReport(reportStartDate, reportEndDate) {
+export async function getAdminLeaveReport(reportStartDate, reportEndDate, status) {
   try {
     if (!conn) await connect();
 
@@ -382,10 +382,18 @@ export async function getAdminLeaveReport(reportStartDate, reportEndDate) {
       };
     }
 
-    const leaveData = await Leave.find({
+    const query = {
       startDate: { $gte: reportStartDate },
       endDate: { $lte: reportEndDate },
-    }).populate('user').sort({ createdAt: -1 });
+    };
+
+    if (status) {
+      query.status = status;
+    }
+
+    const leaveData = await Leave.find(query)
+      .populate('user')
+      .sort({ createdAt: -1 });
 
     if (!leaveData || leaveData.length === 0) {
       return {

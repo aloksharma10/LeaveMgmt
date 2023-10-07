@@ -258,7 +258,7 @@ function UserProvider({ children }) {
         });
       }
     },
-    [toast, user.email, user.name]
+    [toast, user.email, user.name, user.role]
   );
 
   const handleUserApproval = useCallback(
