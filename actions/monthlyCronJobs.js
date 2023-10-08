@@ -144,11 +144,6 @@ export async function generateMonthlyLeaveReportPDF() {
     console.log("res: ", res);
   } catch (error) {
     console.error("Error generating and sending PDF report:", error);
-    // return {
-    //   status: 500,
-    //   message:
-    //     "Something went wrong while generating and sending the PDF report.",
-    // };
   } finally {
     await browser?.close();
   }
